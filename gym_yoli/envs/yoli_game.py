@@ -1,3 +1,4 @@
+from distutils.errors import DistutilsClassError
 import gymnasium as gym
 from gymnasium import spaces
 import pygame
@@ -8,6 +9,7 @@ class YoliGameEnv(gym.Env):
 
     def __init__(self, render_mode=None, size=5, tiles=30):
         self.size = size
+        self.tiles = tiles
         self.window_size = 512  # The size of the PyGame window
 
         self.observation_space = spaces.Dict(
@@ -66,10 +68,11 @@ class YoliGameEnv(gym.Env):
             truncated = True
         
         self._notification = 0
-        self._indications = [0 in range(self.size)]
+        self._indications = [0] * self.size
 
         # Perform action
         self._positions[action.position] = action.tile
+        
         self._match()
 
         terminated = self._notification == 1
