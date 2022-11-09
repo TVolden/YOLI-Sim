@@ -12,18 +12,9 @@ class YoliGameEnv(gym.Env):
         self.tiles = tiles
         self.window_size = 512  # The size of the PyGame window
 
-        self.observation_space = spaces.Dict(
-            {
-                "positions": spaces.Tuple((spaces.Discrete(size), spaces.Discrete(tiles+1)))
-            }
-        )
-
-        self.action_space = spaces.Dict(
-            {
-                "position": spaces.Discrete(size),
-                "tile": spaces.Discrete(tiles+1)
-            }
-        )
+        # One-hot encoding
+        self.observation_space = spaces.Box(low=0, high=1, shape=[size, tiles+1], dtype=np.bool8)
+        self.action_space = spaces.Box(low=0, high=1, shape=[size, tiles+1], dtype=np.bool8)
 
         self._action_tiles = {
             0: None,
@@ -40,7 +31,9 @@ class YoliGameEnv(gym.Env):
         self.clock = None
 
     def _get_obs(self):
-        return {"positions": tuple(self._positions)}
+        oh = np.zeros((self.size, self.tiles + 1))
+        oh[np.arange(self._positions), self._positions] = 1
+        return oh
 
     def _get_info(self):
         return {
@@ -51,7 +44,7 @@ class YoliGameEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
 
-        self._positions = [0] * self.size
+        self._positions = np.array([0] * self.size)
         self._indications = [0] * self.size
 
         observation = self._get_obs()
