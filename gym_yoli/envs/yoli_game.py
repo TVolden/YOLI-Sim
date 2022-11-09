@@ -57,7 +57,9 @@ class YoliGameEnv(gym.Env):
 
     def step(self, action):
         truncated = False
-        if action.position < 0 or action.position > self.size:
+        a = np.array(action)
+        
+        if np.count_nonzero(a == 1) != 1:
             truncated = True
         
         self._notification = 0
