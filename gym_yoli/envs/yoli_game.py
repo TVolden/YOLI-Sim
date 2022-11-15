@@ -18,10 +18,10 @@ class YoliGameEnv(gym.Env):
 
         self._action_tiles = {
             0: None,
-            1: {"name": "Monkey", "group": 1, "order": 1},
-            2: {"name": "Banana", "group": 1, "order": 2},
-            3: {"name": "Lion", "group": 2, "order": 1},
-            4: {"name": "Zebra", "group": 2, "order": 2}
+            1: {"name": "Shape", "group": 1, "order": 1},
+            2: {"name": "Circle", "group": 1, "order": 2},
+            3: {"name": "Animal", "group": 2, "order": 1},
+            4: {"name": "Lion", "group": 2, "order": 2}
         }
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -111,25 +111,19 @@ class YoliGameEnv(gym.Env):
         canvas = pygame.Surface((self.window_size, self.window_size))
         canvas.fill((255, 255, 255))
         pix_square_size = (
-            self.window_size / self.size
+            self.window_size / (self.size + self.tiles)
         )  # The size of a single grid square in pixels
 
-        # First we draw the target
-        pygame.draw.rect(
-            canvas,
-            (255, 0, 0),
-            pygame.Rect(
-                pix_square_size * self._target_location,
-                (pix_square_size, pix_square_size),
-            ),
-        )
-        # Now we draw the agent
-        pygame.draw.circle(
-            canvas,
-            (0, 0, 255),
-            (self._agent_location + 0.5) * pix_square_size,
-            pix_square_size / 3,
-        )
+        # Draw board
+        for x in range(self.size + 1):
+            pygame.draw.rect(
+                canvas,
+                (255, 0, 0),
+                pygame.Rect(
+                    pix_square_size * x,
+                    (pix_square_size, pix_square_size),
+                ),
+            )
 
         # Finally, add some gridlines
         for x in range(self.size + 1):
