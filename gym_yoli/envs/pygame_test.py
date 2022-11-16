@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import math
 from tile_sprites import Tile
+import random
 
 size = 5
 tiles = 30
@@ -10,9 +11,9 @@ window_size = 500
 
 pygame.init()
 pygame.display.init()
-tiles_info = [
-    {"name": "name", "image": "star"}
-]
+
+tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles)]
+random.shuffle(tiles_info)
 
 window = pygame.display.set_mode((window_size, window_size))
 pygame.display.set_caption("Tile Board")
@@ -65,9 +66,9 @@ for x in range(tiles):
     )
 
     if len(tiles_info) > x:
-        object_ = Tile(tiles_info[x].get("image") + ".png", tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
-        object_.rect.x = board_pix_square_size / 2 + 1
-        object_.rect.y = board_pix_square_size + margin / 2 + 1
+        object_ = Tile(tiles_info[x].get("image"), tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
+        object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + 1
+        object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + 1
         all_sprites_list.add(object_)
 
 while True:
