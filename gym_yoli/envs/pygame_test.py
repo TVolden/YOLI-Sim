@@ -4,17 +4,25 @@ import math
 from tile_sprites import Tile
 import random
 import os
+import numpy as np
 
+## Test data
 size = 5
 tiles = 30
 
 window_size = 500
 
+tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles)]
+random.shuffle(tiles_info)
+tiles_info.insert(0, {"image": ""})
+positions = np.array([0] * size)
+positions[2] = random.randint(0, tiles)
+
+## Pygame logic
+
 pygame.init()
 pygame.display.init()
 
-tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles)]
-random.shuffle(tiles_info)
 
 window = pygame.display.set_mode((window_size, window_size))
 pygame.display.set_caption("Tile Board")
@@ -34,7 +42,9 @@ tile_pix_square_size = (
 margin = 10
 
 # Draw board
-for x in range(size + 1):
+all_sprites_list = pygame.sprite.Group()
+
+for x in range(size):
     rect = (
         x * board_pix_square_size + margin / 2,
         margin / 2,
@@ -47,8 +57,12 @@ for x in range(size + 1):
         rect,
         1
     )
-
-all_sprites_list = pygame.sprite.Group()
+    pos = positions[x]
+    if len(tiles_info) > pos and os.path.exists(tiles_info[pos].get("image")):
+        object_ = Tile(tiles_info[pos].get("image"), board_pix_square_size-margin-2, board_pix_square_size-margin-2)
+        object_.rect.x = x * board_pix_square_size + margin / 2 + 1
+        object_.rect.y = margin / 2 + 1
+        all_sprites_list.add(object_)
 
 for x in range(tiles):
     col = x % tile_squares
@@ -65,9 +79,9 @@ for x in range(tiles):
         rect,
         1
     )
-
-    if len(tiles_info) > x and os.path.exists(tiles_info[x].get("image")):
-        object_ = Tile(tiles_info[x].get("image"), tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
+    pos = x+1
+    if pos not in positions and len(tiles_info) > pos and os.path.exists(tiles_info[pos].get("image")):
+        object_ = Tile(tiles_info[pos].get("image"), tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
         object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + 1
         object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + 1
         all_sprites_list.add(object_)
