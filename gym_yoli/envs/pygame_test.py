@@ -3,6 +3,7 @@ from pygame.locals import *
 import math
 from tile_sprites import Tile
 import random
+import os
 
 size = 5
 tiles = 30
@@ -65,7 +66,7 @@ for x in range(tiles):
         1
     )
 
-    if len(tiles_info) > x:
+    if len(tiles_info) > x and os.path.exists(tiles_info[x].get("image")):
         object_ = Tile(tiles_info[x].get("image"), tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
         object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + 1
         object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + 1
