@@ -12,11 +12,11 @@ tiles = 30
 
 window_size = 500
 
-tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles)]
+tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles-2)]
 random.shuffle(tiles_info)
 tiles_info.insert(0, {"image": ""})
 positions = np.array([0] * size)
-positions[2] = random.randint(0, tiles)
+positions[2] = tiles-1#random.randint(0, tiles)
 
 ## Pygame logic
 
@@ -58,8 +58,9 @@ for x in range(size):
         1
     )
     pos = positions[x]
-    if len(tiles_info) > pos and os.path.exists(tiles_info[pos].get("image")):
-        object_ = Tile(tiles_info[pos].get("image"), board_pix_square_size-margin-2, board_pix_square_size-margin-2)
+    if pos > 0:
+        img = tiles_info[pos].get("image") if len(tiles_info) > pos else ""
+        object_ = Tile(img, board_pix_square_size-margin-2, board_pix_square_size-margin-2)
         object_.rect.x = x * board_pix_square_size + margin / 2 + 1
         object_.rect.y = margin / 2 + 1
         all_sprites_list.add(object_)
@@ -80,8 +81,9 @@ for x in range(tiles):
         1
     )
     pos = x+1
-    if pos not in positions and len(tiles_info) > pos and os.path.exists(tiles_info[pos].get("image")):
-        object_ = Tile(tiles_info[pos].get("image"), tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
+    if pos not in positions:
+        img = tiles_info[pos].get("image") if len(tiles_info) > pos else ""
+        object_ = Tile(img, tile_pix_square_size-margin-2, tile_pix_square_size-margin-2)
         object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + 1
         object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + 1
         all_sprites_list.add(object_)
