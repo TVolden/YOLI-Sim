@@ -16,7 +16,8 @@ tiles_info = [{"image": f"tiles\\{x+1:02}.png"} for x in range(tiles-2)]
 random.shuffle(tiles_info)
 tiles_info.insert(0, {"image": ""})
 positions = np.array([0] * size)
-positions[2] = tiles-1#random.randint(0, tiles)
+positions[2] = tiles-1
+positions[0] = random.randint(0, tiles)
 
 ## Pygame logic
 

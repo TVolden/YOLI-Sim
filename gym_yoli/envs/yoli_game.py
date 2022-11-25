@@ -4,7 +4,6 @@ from gymnasium import spaces
 import pygame
 import numpy as np
 import math
-from tile_sprites import Tile
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -34,7 +33,7 @@ class YoliGameEnv(gym.Env):
 
     def _get_obs(self):
         oh = np.zeros((self.size, self.tiles + 1))
-        oh[np.arange(self._positions), self._positions] = 1
+        oh[range(self.size), self._positions] = 1
         return oh
 
     def _get_action_mask(self):
@@ -60,6 +59,7 @@ class YoliGameEnv(gym.Env):
 
         self._positions = np.array([0] * self.size)
         self._indications = [0] * self.size
+        self._notification = 0
 
         observation = self._get_obs()
         info = self._get_info()
