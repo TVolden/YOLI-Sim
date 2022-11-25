@@ -6,7 +6,7 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, image_file, width, height):
         pygame.sprite.Sprite.__init__(self)
 
-        if (os.path.exists(image_file)):
+        if (image_file is not None and os.path.exists(image_file)):
             self.image = pygame.image.load(image_file).convert()
             self.image = pygame.transform.scale(self.image, (int(width), int(height)))
         else:

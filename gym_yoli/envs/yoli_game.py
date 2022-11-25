@@ -4,6 +4,7 @@ from gymnasium import spaces
 import pygame
 import numpy as np
 import math
+from .tile_sprites import Tile
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -179,7 +180,7 @@ class YoliGameEnv(gym.Env):
                 1
             )
             pos = x+1
-            if pos not in self.positions:
+            if pos not in self._positions:
                 img = self._action_tiles[pos].get("image") if len(self._action_tiles) > pos else ""
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
