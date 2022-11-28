@@ -5,11 +5,13 @@ import pygame
 import numpy as np
 import math
 from .tile_sprites import Tile
+from .tile_master import TileMaster
+from .match import MatchTwo
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, size=5, tiles=30):
+    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo):
         self.size = size
         self.tiles = tiles
         self.window_size = 512  # The size of the PyGame window
