@@ -11,7 +11,7 @@ class MatchTwo (TileMaster):
     def evaluate(self, positions: tuple()) -> tuple():
         # Initialize output
         indication = [0] * self.size
-        notification = 0 # Nothing
+        terminal = False
 
         group = None
         for i in range(self.size):
@@ -25,6 +25,6 @@ class MatchTwo (TileMaster):
                     indication[i] = 2 # Rejected
                 else:
                     indication[i] = 1 # Accept
-                    notification = 1 # Win
+                    terminal = True # Win
         
-        return tuple(indication), notification
+        return tuple(indication), terminal

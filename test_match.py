@@ -38,6 +38,18 @@ class TestMatchTwo(unittest.TestCase):
         # Then
         self.assertEqual(indications, expected)
 
+    def test_evaluate_oneTile_nonTerminalState(self):
+        # Given
+        sut = MatchTwo()
+        board = [1] + [0] * 5
+        expected = False
+
+        # When
+        _, terminal = sut.evaluate(board)
+
+        # Then
+        self.assertEqual(terminal, expected)
+
     def test_evaluate_groupMismatch_rejectSecond(self):
         # Given
         sut = MatchTwo()
@@ -49,6 +61,18 @@ class TestMatchTwo(unittest.TestCase):
 
         # Then
         self.assertEqual(indications, expected)
+
+    def test_evaluate_groupMismatch_nonTerminalState(self):
+        # Given
+        sut = MatchTwo()
+        board = [1, 3] + [0] * 4
+        expected = False
+
+        # When
+        _, terminal = sut.evaluate(board)
+
+        # Then
+        self.assertEqual(terminal, expected)
 
     def test_evaluate_sizeTwoTwoTilesSplitByEmptySpace_checksFirstTwoOnly(self):
         # Given
@@ -62,6 +86,18 @@ class TestMatchTwo(unittest.TestCase):
 
         # Then
         self.assertEqual(indication, expected)
+
+    def test_evaluate_matchingGroups_terminalState(self):
+        # Given
+        sut = MatchTwo()
+        board = [1, 2] + [0] * 4
+        expected = True
+
+        # When
+        _, terminal = sut.evaluate(board)
+
+        # Then
+        self.assertEqual(terminal, expected)
 
     def test_evaluate_multipleGroupMatch_rejectOneAcceptTheOther(self):
         # Given
