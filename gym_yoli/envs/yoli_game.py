@@ -11,22 +11,15 @@ from .match import MatchTwo
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo):
+    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo()):
         self.size = size
-        self.tiles = tiles
+        self.master = tile_master
+        self.tiles = tile_master.tile_count()
         self.window_size = 512  # The size of the PyGame window
 
         # One-hot encoding
-        self.observation_space = spaces.Box(low=0, high=1, shape=[size, tiles+1], dtype=np.bool8)
-        self.action_space = spaces.Box(low=0, high=1, shape=[size, tiles+1], dtype=np.bool8)
-
-        self._action_tiles = [
-            None,
-            {"name": "Shape", "group": 1, "order": 1},
-            {"name": "Circle", "group": 1, "order": 2},
-            {"name": "Animal", "group": 2, "order": 1},
-            {"name": "Lion", "group": 2, "order": 2}
-        ]
+        self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
+        self.action_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -43,7 +36,7 @@ class YoliGameEnv(gym.Env):
         mask = np.zeros((self.size, self.tiles + 1))
         
         # Make a list of available tiles
-        available_tiles = [0]+[0 if tile in self._positions else 1 for tile in range(self.tiles)]
+        available_tiles = [0]+[0 if tile in self._positions else 1 for tile in range(self.master.tile_count())]
 
         for i in range(self.size):
             if self._positions[i]==0:
@@ -74,20 +67,20 @@ class YoliGameEnv(gym.Env):
 
     def step(self, action):
         truncated = False
-        a = np.array(action)
+        act = np.array(action)
         
-        if np.count_nonzero(a == 1) != 1:
+        if np.count_nonzero(act == 1) != 1:
             truncated = True
         
-        self._notification = 0
-        self._indications = [0] * self.size
-
         # Perform action
-        self._positions[action.position] = action.tile
+        pos = np.where(act==1)[0][0]
+        tile = np.where(act[pos]==1)[0][0]
+        self._positions[pos] = tile
         
-        self._match()
-
-        terminated = self._notification == 1
+        self._indications, terminated = self.master.evaluate(self._positions)
+        self._positions[np.where(self._indications==2)]=0
+        self._notification = 1 if terminated else 0
+        
         reward = 1 if terminated else 0  # Binary sparse rewards
         observation = self._get_obs()
         info = self._get_info()
@@ -97,21 +90,21 @@ class YoliGameEnv(gym.Env):
 
         return observation, reward, terminated, truncated, info
 
-    def _match(self):
-        group = None
-        for i in range(self.size):
-            pos = self._positions[i]
-            tile = self._action_tiles[pos]
-            if tile is not None:
-                if group is None:
-                    group = tile.group
-                    self._indications[i] = 1 # Accept
-                elif group != tile.group: 
-                    self._positions[i] = 0
-                    self._indications[i] = 2 # Rejected
-                else:
-                    self._indications[i] = 1 # Accept
-                    self._notification = 1 # Win
+    # def _match(self):
+    #     group = None
+    #     for i in range(self.size):
+    #         pos = self._positions[i]
+    #         tile = self.master.tiles[pos]
+    #         if tile is not None:
+    #             if group is None:
+    #                 group = tile.group
+    #                 self._indications[i] = 1 # Accept
+    #             elif group != tile.group: 
+    #                 self._positions[i] = 0
+    #                 self._indications[i] = 2 # Rejected
+    #             else:
+    #                 self._indications[i] = 1 # Accept
+    #                 self._notification = 1 # Win
 
     def render(self):
         if self.render_mode == "rgb_array":
@@ -128,7 +121,7 @@ class YoliGameEnv(gym.Env):
         canvas = pygame.Surface((self.window_size, self.window_size))
         canvas.fill((255, 255, 255))
         
-        # Calculate unit lenghts
+        # Calculate unit lengths
         board_pix_square_size = (
             self.window_size / self.size
         )  # The size of a single board grid square in pixels
@@ -159,7 +152,7 @@ class YoliGameEnv(gym.Env):
             )
             pos = self._positions[x]
             if pos > 0:
-                img = self._action_tiles[pos].get("image") if len(self._action_tiles) > pos else ""
+                img = self.master.tiles[pos].get("image") if self.tiles > pos else ""
                 object_ = Tile(img, board_pix_square_size-margin-padding, board_pix_square_size-margin-padding)
                 object_.rect.x = x * board_pix_square_size + margin / 2 + padding / 2
                 object_.rect.y = margin / 2 + padding / 2
