@@ -4,7 +4,7 @@ from gymnasium import spaces
 import pygame
 import numpy as np
 import math
-from .tile_sprites import Tile
+from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
 
@@ -69,16 +69,17 @@ class YoliGameEnv(gym.Env):
         truncated = False
         act = np.array(action)
         
+        # Guard against illegal actions.
         if np.count_nonzero(act == 1) != 1:
-            truncated = True
+            return self._get_obs(), 0, False, True, self._get_info()
         
         # Perform action
         pos = np.where(act==1)[0][0]
         tile = np.where(act[pos]==1)[0][0]
         self._positions[pos] = tile
-        
+
         self._indications, terminated = self.master.evaluate(self._positions)
-        self._positions[np.where(self._indications==2)]=0
+        self._positions[np.where(np.array(self._indications)==2)]=0
         self._notification = 1 if terminated else 0
         
         reward = 1 if terminated else 0  # Binary sparse rewards
@@ -89,22 +90,6 @@ class YoliGameEnv(gym.Env):
             self._render_frame()
 
         return observation, reward, terminated, truncated, info
-
-    # def _match(self):
-    #     group = None
-    #     for i in range(self.size):
-    #         pos = self._positions[i]
-    #         tile = self.master.tiles[pos]
-    #         if tile is not None:
-    #             if group is None:
-    #                 group = tile.group
-    #                 self._indications[i] = 1 # Accept
-    #             elif group != tile.group: 
-    #                 self._positions[i] = 0
-    #                 self._indications[i] = 2 # Rejected
-    #             else:
-    #                 self._indications[i] = 1 # Accept
-    #                 self._notification = 1 # Win
 
     def render(self):
         if self.render_mode == "rgb_array":

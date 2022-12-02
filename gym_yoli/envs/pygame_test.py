@@ -1,9 +1,8 @@
 import pygame
 from pygame.locals import *
 import math
-from tile_sprites import Tile
+from .tile import Tile
 import random
-import os
 import numpy as np
 
 ## Test data
