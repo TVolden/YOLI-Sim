@@ -7,6 +7,7 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
+from gym_yoli.spaces.onehotencoding import OneHotEncoding
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -19,7 +20,7 @@ class YoliGameEnv(gym.Env):
 
         # One-hot encoding
         self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
-        self.action_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
+        self.action_space = OneHotEncoding(size, self.tiles+1)
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -32,7 +33,7 @@ class YoliGameEnv(gym.Env):
         oh[range(self.size), self._positions] = 1
         return oh
 
-    def _get_action_mask(self):
+    def legal_actions(self):
         mask = np.zeros((self.size, self.tiles + 1))
         
         # Make a list of available tiles
@@ -76,9 +77,15 @@ class YoliGameEnv(gym.Env):
         # Perform action
         pos = np.where(act==1)[0][0]
         tile = np.where(act[pos]==1)[0][0]
+
+        # Guard against tile duplet
+        if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
+            return self._get_obs(), 0, False, True, self._get_info()
+
         self._positions[pos] = tile
 
-        self._indications, terminated = self.master.evaluate(self._positions)
+        board = [i-1 if i > 0 else None for i in self._positions]
+        self._indications, terminated = self.master.evaluate(board)
         self._positions[np.where(np.array(self._indications)==2)]=0
         self._notification = 1 if terminated else 0
         
@@ -137,7 +144,7 @@ class YoliGameEnv(gym.Env):
             )
             pos = self._positions[x]
             if pos > 0:
-                img = self.master.tiles[pos].get("image") if self.tiles > pos else ""
+                img = self.master.tile_at(pos).get("image") if self.tiles > pos else ""
                 object_ = Tile(img, board_pix_square_size-margin-padding, board_pix_square_size-margin-padding)
                 object_.rect.x = x * board_pix_square_size + margin / 2 + padding / 2
                 object_.rect.y = margin / 2 + padding / 2
@@ -161,7 +168,7 @@ class YoliGameEnv(gym.Env):
             )
             pos = x+1
             if pos not in self._positions:
-                img = self._action_tiles[pos].get("image") if len(self._action_tiles) > pos else ""
+                img = self.master.tile_at(pos).get("image") if self.tiles > pos else ""
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
                 object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + padding / 2
