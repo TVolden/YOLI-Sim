@@ -7,7 +7,8 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-from gym_yoli.spaces.onehotencoding import OneHotEncoding
+from .onehotgenerator import OneHotGenerator
+
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -20,7 +21,7 @@ class YoliGameEnv(gym.Env):
 
         # One-hot encoding
         self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
-        self.action_space = OneHotEncoding(size, self.tiles+1)
+        self.action_space = spaces.MultiBinary((size, self.tiles+1), OneHotGenerator())
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -34,16 +35,18 @@ class YoliGameEnv(gym.Env):
         return oh
 
     def legal_actions(self):
-        mask = np.zeros((self.size, self.tiles + 1))
+        mask = np.zeros((self.size, self.tiles + 1), np.int8)
         
         # Make a list of available tiles
-        available_tiles = [0]+[0 if tile in self._positions else 1 for tile in range(self.master.tile_count())]
+        available_tiles = [0]+[0 if tile in self._positions else 2 for tile in range(1, self.tiles+1)]
 
         for i in range(self.size):
             if self._positions[i]==0:
                 mask[i] = available_tiles # Must place a tile which is not already used
             else:
-                mask[i, 0] = 1 # Only allow removal of a tile
+                mask[i, 0] = 2 # Only allow removal of a tile
+        
+        return mask
 
     def _get_info(self):
         return {
