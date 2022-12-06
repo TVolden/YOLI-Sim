@@ -1,4 +1,4 @@
-import gymnasium as gym
+import gym as gym
 import numpy as np
 
 class OneHotEncoding(gym.Space):

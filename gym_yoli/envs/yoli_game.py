@@ -1,6 +1,6 @@
 from distutils.errors import DistutilsClassError
-import gymnasium as gym
-from gymnasium import spaces
+import gym as gym
+from gym import spaces
 import pygame
 import numpy as np
 import math
@@ -21,7 +21,8 @@ class YoliGameEnv(gym.Env):
 
         # One-hot encoding
         self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
-        self.action_space = spaces.MultiBinary((size, self.tiles+1), OneHotGenerator())
+        self.action_space = spaces.MultiBinary((size, self.tiles+1))
+        self.action_space._np_random = OneHotGenerator()
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -55,7 +56,7 @@ class YoliGameEnv(gym.Env):
         }
 
     def reset(self, seed=None, options=None):
-        super().reset(seed=seed)
+        #super().reset(seed=seed)
 
         self._positions = np.array([0] * self.size)
         self._indications = [0] * self.size
@@ -100,7 +101,7 @@ class YoliGameEnv(gym.Env):
             self._render_frame()
 
         return observation, reward, terminated, truncated, info
-
+  
     def render(self):
         if self.render_mode == "rgb_array":
             return self._render_frame()
