@@ -20,9 +20,8 @@ class YoliGameEnv(gym.Env):
         self.window_size = 512  # The size of the PyGame window
 
         # One-hot encoding
-        self.observation_space = spaces.MultiBinary(size * (self.tiles+1))
-        self.action_space = spaces.MultiBinary(size * (self.tiles+1))
-        self.action_space._np_random = OneHotGenerator()
+        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self.tiles+1),), dtype=np.uint8)
+        self.action_space = spaces.Discrete(size * (self.tiles+1))
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -34,20 +33,6 @@ class YoliGameEnv(gym.Env):
         oh = np.zeros((self.size, self.tiles + 1))
         oh[range(self.size), self._positions] = 1
         return oh.flatten()
-
-    def legal_actions(self):
-        mask = np.zeros((self.size, self.tiles + 1), np.int8)
-        
-        # Make a list of available tiles
-        available_tiles = [0]+[0 if tile in self._positions else 2 for tile in range(1, self.tiles+1)]
-
-        for i in range(self.size):
-            if self._positions[i]==0:
-                mask[i] = available_tiles # Must place a tile which is not already used
-            else:
-                mask[i, 0] = 2 # Only allow removal of a tile
-        
-        return mask.flatten()
 
     def _get_info(self):
         return {
@@ -72,15 +57,10 @@ class YoliGameEnv(gym.Env):
 
     def step(self, action):
         truncated = False
-        act = np.array(action).reshape((self.size, self.tiles+1))
-        
-        # Guard against illegal actions.
-        if np.count_nonzero(act == 1) != 1:
-            return self._get_obs(), 0, False, True, self._get_info()
-        
-        # Perform action
-        pos = np.where(act==1)[0][0]
-        tile = np.where(act[pos]==1)[0][0]
+
+        # Find coordinate
+        pos = action % (self.tiles + 1)
+        tile = math.floor(action / (self.tiles + 1))
 
         # Guard against tile duplet
         if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
