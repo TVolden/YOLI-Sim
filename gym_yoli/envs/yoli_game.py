@@ -20,8 +20,8 @@ class YoliGameEnv(gym.Env):
         self.window_size = 512  # The size of the PyGame window
 
         # One-hot encoding
-        self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
-        self.action_space = spaces.MultiBinary((size, self.tiles+1))
+        self.observation_space = spaces.MultiBinary(size * (self.tiles+1))
+        self.action_space = spaces.MultiBinary(size * (self.tiles+1))
         self.action_space._np_random = OneHotGenerator()
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -33,7 +33,7 @@ class YoliGameEnv(gym.Env):
     def _get_obs(self):
         oh = np.zeros((self.size, self.tiles + 1))
         oh[range(self.size), self._positions] = 1
-        return oh
+        return oh.flatten()
 
     def legal_actions(self):
         mask = np.zeros((self.size, self.tiles + 1), np.int8)
@@ -47,7 +47,7 @@ class YoliGameEnv(gym.Env):
             else:
                 mask[i, 0] = 2 # Only allow removal of a tile
         
-        return mask
+        return mask.flatten()
 
     def _get_info(self):
         return {
@@ -72,7 +72,7 @@ class YoliGameEnv(gym.Env):
 
     def step(self, action):
         truncated = False
-        act = np.array(action)
+        act = np.array(action).reshape((self.size, self.tiles+1))
         
         # Guard against illegal actions.
         if np.count_nonzero(act == 1) != 1:
