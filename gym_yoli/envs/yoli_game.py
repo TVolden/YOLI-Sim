@@ -30,7 +30,7 @@ class YoliGameEnv(gym.Env):
         self.clock = None
 
     def _get_obs(self):
-        oh = np.zeros((self.size, self.tiles + 1))
+        oh = np.zeros((self.size, self.tiles + 1), dtype=np.uint8)
         oh[range(self.size), self._positions] = 1
         return oh.flatten()
 
@@ -53,7 +53,7 @@ class YoliGameEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, info
+        return observation
 
     def step(self, action):
         truncated = False
@@ -64,7 +64,7 @@ class YoliGameEnv(gym.Env):
 
         # Guard against tile duplet
         if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
-            return self._get_obs(), 0, False, True, self._get_info()
+            return self._get_obs(), 0, False, self._get_info()
 
         self._positions[pos] = tile
 
@@ -80,9 +80,15 @@ class YoliGameEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, reward, terminated, truncated, info
+        return observation, reward, terminated, info
   
-    def render(self):
+    def render(self, mode = None):
+        if mode == "human":
+            old_mode = self.render_mode
+            self.render_mode = mode
+            self._render_frame()
+            self.render_mode = old_mode
+            
         if self.render_mode == "rgb_array":
             return self._render_frame()
 
