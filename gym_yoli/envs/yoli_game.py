@@ -55,25 +55,36 @@ class YoliGameEnv(gym.Env):
 
         return observation
 
+    def _unpack_action(self, action):
+        pos = None
+        tile = None
+        if np.count_nonzero(action) != 1:
+            raise Exception("Illegal action. Multiple moves.")
+        else:
+            # Find coordinate
+            pos = action % (self.tiles + 1)
+            tile = math.floor(action / (self.tiles + 1))
+            if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
+                raise Exception("Illegal action. Tile already placed.")
+        return pos, tile
+    
     def step(self, action):
-        truncated = False
+        reward = 0
+        terminated = False
 
-        # Find coordinate
-        pos = action % (self.tiles + 1)
-        tile = math.floor(action / (self.tiles + 1))
-
-        # Guard against tile duplet
-        if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
-            return self._get_obs(), 0, False, self._get_info()
-
-        self._positions[pos] = tile
-
-        board = [i-1 if i > 0 else None for i in self._positions]
-        self._indications, terminated = self.master.evaluate(board)
-        self._positions[np.where(np.array(self._indications)==2)]=0
-        self._notification = 1 if terminated else 0
+        try:
+            pos, tile = self._unpack_action(action)
+            self._positions[pos] = tile
+            board = [i-1 if i > 0 else None for i in self._positions]
+            self._indications, terminated = self.master.evaluate(board)
+            self._positions[np.where(np.array(self._indications)==2)]=0
+            self._notification = 1 if terminated else 0
         
-        reward = 1 if terminated else 0  # Binary sparse rewards
+            if terminated:
+                reward = 1
+        except:
+            reward = -1
+
         observation = self._get_obs()
         info = self._get_info()
 
