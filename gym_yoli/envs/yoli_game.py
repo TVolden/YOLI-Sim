@@ -20,9 +20,8 @@ class YoliGameEnv(gym.Env):
         self.window_size = 512  # The size of the PyGame window
 
         # One-hot encoding
-        self.observation_space = spaces.Box(low=0, high=1, shape=[size, self.tiles+1], dtype=np.bool8)
-        self.action_space = spaces.MultiBinary((size, self.tiles+1))
-        self.action_space._np_random = OneHotGenerator()
+        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self.tiles+1),), dtype=np.uint8)
+        self.action_space = spaces.Discrete(size * (self.tiles+1))
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -31,23 +30,9 @@ class YoliGameEnv(gym.Env):
         self.clock = None
 
     def _get_obs(self):
-        oh = np.zeros((self.size, self.tiles + 1))
+        oh = np.zeros((self.size, self.tiles + 1), dtype=np.uint8)
         oh[range(self.size), self._positions] = 1
-        return oh
-
-    def legal_actions(self):
-        mask = np.zeros((self.size, self.tiles + 1), np.int8)
-        
-        # Make a list of available tiles
-        available_tiles = [0]+[0 if tile in self._positions else 2 for tile in range(1, self.tiles+1)]
-
-        for i in range(self.size):
-            if self._positions[i]==0:
-                mask[i] = available_tiles # Must place a tile which is not already used
-            else:
-                mask[i, 0] = 2 # Only allow removal of a tile
-        
-        return mask
+        return oh.flatten()
 
     def _get_info(self):
         return {
@@ -68,41 +53,53 @@ class YoliGameEnv(gym.Env):
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, info
+        return observation
 
+    def _unpack_action(self, action):
+        pos = None
+        tile = None
+        if np.count_nonzero(action) != 1:
+            raise Exception("Illegal action. Multiple moves.")
+        else:
+            # Find coordinate
+            pos = action % (self.tiles + 1)
+            tile = math.floor(action / (self.tiles + 1))
+            if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
+                raise Exception("Illegal action. Tile already placed.")
+        return pos, tile
+    
     def step(self, action):
-        truncated = False
-        act = np.array(action)
-        
-        # Guard against illegal actions.
-        if np.count_nonzero(act == 1) != 1:
-            return self._get_obs(), 0, False, True, self._get_info()
-        
-        # Perform action
-        pos = np.where(act==1)[0][0]
-        tile = np.where(act[pos]==1)[0][0]
+        reward = 0
+        terminated = False
 
-        # Guard against tile duplet
-        if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
-            return self._get_obs(), 0, False, True, self._get_info()
-
-        self._positions[pos] = tile
-
-        board = [i-1 if i > 0 else None for i in self._positions]
-        self._indications, terminated = self.master.evaluate(board)
-        self._positions[np.where(np.array(self._indications)==2)]=0
-        self._notification = 1 if terminated else 0
+        try:
+            pos, tile = self._unpack_action(action)
+            self._positions[pos] = tile
+            board = [i-1 if i > 0 else None for i in self._positions]
+            self._indications, terminated = self.master.evaluate(board)
+            self._positions[np.where(np.array(self._indications)==2)]=0
+            self._notification = 1 if terminated else 0
         
-        reward = 1 if terminated else 0  # Binary sparse rewards
+            if terminated:
+                reward = 1
+        except:
+            reward = -1
+
         observation = self._get_obs()
         info = self._get_info()
 
         if self.render_mode == "human":
             self._render_frame()
 
-        return observation, reward, terminated, truncated, info
+        return observation, reward, terminated, info
   
-    def render(self):
+    def render(self, mode = None):
+        if mode == "human":
+            old_mode = self.render_mode
+            self.render_mode = mode
+            self._render_frame()
+            self.render_mode = old_mode
+            
         if self.render_mode == "rgb_array":
             return self._render_frame()
 
