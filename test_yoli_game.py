@@ -16,100 +16,60 @@ class TestYoliGameEnv(unittest.TestCase):
         # Than
         tileMasterMock.tile_count.assert_called_once()
     
-    def test_reset_sizeOneOneTile_returnsOneByTwoObservation(self):
+    def test_reset_sizeOneOneTile_returnsTwoElementObservation(self):
         # Given
-        expected = [[1, 0]]
+        expected = [1, 0]
         tileMasterMock = Mock(TileMaster)
         tileMasterMock.tile_count = Mock(return_value=1)
         sut = YoliGameEnv(size=1, tile_master=tileMasterMock)
 
         # When
-        observation, _ = sut.reset()
+        observation = sut.reset()
 
         # Then
         numpy.testing.assert_array_equal(observation, expected)
     
-    def test_reset_sizeTwoOneTile_returnsTwoByTwoObservation(self):
+    def test_reset_sizeTwoOneTile_returnsFourElementsObservation(self):
         # Given
-        expected = [[1, 0], [1, 0]]
+        expected = [1, 0, 1, 0]
         tileMasterMock = Mock(TileMaster)
         tileMasterMock.tile_count = Mock(return_value=1)
         sut = YoliGameEnv(size=2, tile_master=tileMasterMock)
 
         # When
-        observation, _ = sut.reset()
+        observation = sut.reset()
 
         # Then
         numpy.testing.assert_array_equal(observation, expected)
 
-    def test_reset_sizeTwoTwoTiles_returnsTwoByThreeObservation(self):
+    def test_reset_sizeTwoTwoTiles_returnsSixElementsObservation(self):
         # Given
-        expected = [[1, 0, 0], [1, 0, 0]]
+        expected = [1, 0, 0, 1, 0, 0]
         tileMasterMock = Mock(TileMaster)
         tileMasterMock.tile_count = Mock(return_value=2)
         sut = YoliGameEnv(size=2, tile_master=tileMasterMock)
 
         # When
-        observation, _ = sut.reset()
+        observation = sut.reset()
 
         # Then
         numpy.testing.assert_array_equal(observation, expected)
 
-    def test_reset_returnsInformationDict_notificationIsZero(self):
-        # Given
-        expected = 0
-        tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=0)
-        sut = YoliGameEnv(tile_master=tileMasterMock)
-
-        # When
-        _, information = sut.reset()
-
-        # Then
-        self.assertEqual(information.get('notification'), expected)
-    
-    def test_reset_returnsInformationDict_indicationsIsZeroArray(self):
-        # Given
-        expected = tuple([0] * 5)
-        tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=0)
-        sut = YoliGameEnv(tile_master=tileMasterMock)
-
-        # When
-        _, information = sut.reset()
-
-        # Then
-        self.assertEqual(information.get('indications'), expected)
-
-    def test_step_noAction_returnTruncatedTrue(self):
+    def test_step_noAction_returnNegativeReward(self):
         # Given
         tileMasterMock = Mock(TileMaster)
         tileMasterMock.tile_count = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        no_action = [[0,0], [0,0], [0,0]]
+        no_action = 0
+        expected = -1
 
         # When
-        _, _, _, truncated, _ = sut.step(no_action)
+        _, reward, _, _ = sut.step(no_action)
 
         # Then
-        self.assertTrue(truncated)
-
-    def test_step_doubleAction_returnTruncatedTrue(self):
-        # Given
-        tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
-        tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
-        sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
-        sut.reset()
-        no_action = [[0,1], [1,0], [0,0]]
-
-        # When
-        _, _, _, truncated, _ = sut.step(no_action)
-
-        # Then
-        self.assertTrue(truncated)
+        self.assertEqual(reward, expected)
 
     def test_step_action_evaluateIsCalled(self):
         # Given
@@ -118,7 +78,7 @@ class TestYoliGameEnv(unittest.TestCase):
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = [[0,0], [0,1], [0,0]]
+        action = 3 # Place tile 1 on place 1
 
         # When
         sut.step(action)
@@ -133,11 +93,11 @@ class TestYoliGameEnv(unittest.TestCase):
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = [[0,0], [0,1], [0,0]]
-        excepted = [[1,0], [0,1], [1,0]]
+        action = 3 # Place tile 1 on place 1
+        excepted = [1,0, 0,1, 1,0]
 
         # When
-        observation, _, _, _, _ = sut.step(action)
+        observation, _, _, _ = sut.step(action)
 
         # Then
         numpy.testing.assert_array_equal(observation, excepted)
@@ -149,11 +109,11 @@ class TestYoliGameEnv(unittest.TestCase):
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,2,0]), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = [[0,0], [0,1], [0,0]]
-        excepted = [[1,0], [1,0], [1,0]]
+        action = 3 # Place tile 1 on place 1
+        excepted = [1,0, 1,0, 1,0]
 
         # When
-        observation, _, _, _, _ = sut.step(action)
+        observation, _, _, _ = sut.step(action)
 
         # Then
         numpy.testing.assert_array_equal(observation, excepted)
@@ -165,10 +125,10 @@ class TestYoliGameEnv(unittest.TestCase):
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,0,0]), 1))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = [[0,0], [0,1], [0,0]]
+        action = 3 # Place tile 1 on place 1
 
         # When
-        _, _, terminated, _, _ = sut.step(action)
+        _, _, terminated, _ = sut.step(action)
 
         # Then
         self.assertTrue(terminated)
@@ -180,11 +140,11 @@ class TestYoliGameEnv(unittest.TestCase):
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,0,0]), 1))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = [[0,0], [0,1], [0,0]]
+        action = 3 # Place tile 1 on place 1
         expected = 1
 
         # When
-        _, reward, _, _, _ = sut.step(action)
+        _, reward, _, _ = sut.step(action)
 
         # Then
         self.assertEqual(reward, expected)
