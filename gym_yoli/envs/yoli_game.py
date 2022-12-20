@@ -16,7 +16,7 @@ class YoliGameEnv(gym.Env):
     def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo()):
         self.size = size
         self.master = tile_master
-        self.tiles = tile_master.tile_count()
+        self.tiles = tile_master.count_tiles()
         self.window_size = 512  # The size of the PyGame window
 
         # One-hot encoding
@@ -145,7 +145,8 @@ class YoliGameEnv(gym.Env):
             )
             pos = self._positions[x]
             if pos > 0:
-                img = self.master.tile_at(pos).get("image") if self.tiles > pos else ""
+                tile = pos - 1
+                img = self.master.tile_image_at(tile) if self.tiles > tile else ""
                 object_ = Tile(img, board_pix_square_size-margin-padding, board_pix_square_size-margin-padding)
                 object_.rect.x = x * board_pix_square_size + margin / 2 + padding / 2
                 object_.rect.y = margin / 2 + padding / 2
@@ -169,7 +170,8 @@ class YoliGameEnv(gym.Env):
             )
             pos = x+1
             if pos not in self._positions:
-                img = self.master.tile_at(pos).get("image") if self.tiles > pos else ""
+                tile = pos - 1
+                img = self.master.tile_image_at(tile) if self.tiles > tile else ""
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
                 object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + padding / 2
