@@ -58,14 +58,11 @@ class YoliGameEnv(gym.Env):
     def _unpack_action(self, action):
         pos = None
         tile = None
-        if np.count_nonzero(action) != 1:
-            raise Exception("Illegal action. Multiple moves.")
-        else:
-            # Find coordinate
-            pos = action % (self.tiles + 1)
-            tile = math.floor(action / (self.tiles + 1))
-            if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
-                raise Exception("Illegal action. Tile already placed.")
+        # Find coordinate
+        pos = action % (self.size)
+        tile = math.floor(action / self.size)
+        if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
+            raise Exception("Illegal action. Tile already placed.")
         return pos, tile
     
     def step(self, action):
