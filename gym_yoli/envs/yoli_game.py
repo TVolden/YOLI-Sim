@@ -46,6 +46,7 @@ class YoliGameEnv(gym.Env):
         self._positions = np.array([0] * self.size)
         self._indications = [0] * self.size
         self._notification = 0
+        self._steps = 0
 
         observation = self._get_obs()
         info = self._get_info()
@@ -61,6 +62,10 @@ class YoliGameEnv(gym.Env):
         # Find coordinate
         pos = action % (self.size)
         tile = math.floor(action / self.size)
+        if tile > 0 and self._positions[pos] != 0:
+            raise Exception("Illegal action. Tiles can't be replaced with other tiles, only removed.")
+        if tile == 0 and self._positions[pos] == 0:
+            raise Exception("Illegal action. No tile to remove.")
         if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
             raise Exception("Illegal action. Tile already placed.")
         return pos, tile
@@ -68,6 +73,7 @@ class YoliGameEnv(gym.Env):
     def step(self, action):
         reward = 0
         terminated = False
+        self._steps += 1
 
         try:
             pos, tile = self._unpack_action(action)
@@ -76,7 +82,10 @@ class YoliGameEnv(gym.Env):
             self._indications, terminated = self.master.evaluate(board)
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
-        
+
+            reward = self._indications.count(1) / len(self._indications) / self._steps
+            if self._indications.count(2) > 0:
+                reward = 0
             if terminated:
                 reward = 1
         except:
