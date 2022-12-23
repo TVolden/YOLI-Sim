@@ -79,12 +79,15 @@ class YoliGameEnv(gym.Env):
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
 
+            # Reward for each correct placements
             reward = self._indications.count(1) / len(self._indications)
-            #reward -= self._indications.count(2)
+
+            if self._indications.count(2) > 0:
+                reward = 0 # No rewards for a reject
             if terminated:
-                reward = 1
+                reward = 1 # Full reward for completed game
         except:
-            reward = -1
+            reward = -1 # Negative reward for illegal move
 
         observation = self._get_obs()
         info = self._get_info()
