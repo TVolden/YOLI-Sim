@@ -8,19 +8,19 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_instantiate_callsTileCountOnTileMaster(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
 
         # When
         sut = YoliGameEnv(tile_master=tileMasterMock)
 
         # Than
-        tileMasterMock.tile_count.assert_called_once()
+        tileMasterMock.count_tiles.assert_called_once()
     
     def test_reset_sizeOneOneTile_returnsTwoElementObservation(self):
         # Given
         expected = [1, 0]
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         sut = YoliGameEnv(size=1, tile_master=tileMasterMock)
 
         # When
@@ -33,7 +33,7 @@ class TestYoliGameEnv(unittest.TestCase):
         # Given
         expected = [1, 0, 1, 0]
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         sut = YoliGameEnv(size=2, tile_master=tileMasterMock)
 
         # When
@@ -46,7 +46,7 @@ class TestYoliGameEnv(unittest.TestCase):
         # Given
         expected = [1, 0, 0, 1, 0, 0]
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=2)
+        tileMasterMock.count_tiles = Mock(return_value=2)
         sut = YoliGameEnv(size=2, tile_master=tileMasterMock)
 
         # When
@@ -58,7 +58,7 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_noAction_returnNegativeReward(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
@@ -74,11 +74,11 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_action_evaluateIsCalled(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = 3 # Place tile 1 on place 1
+        action = 4 # Place tile 1 on place 1
 
         # When
         sut.step(action)
@@ -89,11 +89,11 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_action_returnNewObservation(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0]*3), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = 3 # Place tile 1 on place 1
+        action = 4 # Place tile 1 on place 1
         excepted = [1,0, 0,1, 1,0]
 
         # When
@@ -105,11 +105,11 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_evaluationRejectsAction_returnOldObservation(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,2,0]), 0))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = 3 # Place tile 1 on place 1
+        action = 4 # Place tile 1 on place 1
         excepted = [1,0, 1,0, 1,0]
 
         # When
@@ -121,11 +121,11 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_evaluationReturnsTerminated_returnsTerminated(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,0,0]), 1))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = 3 # Place tile 1 on place 1
+        action = 4 # Place tile 1 on place 1
 
         # When
         _, _, terminated, _ = sut.step(action)
@@ -136,12 +136,29 @@ class TestYoliGameEnv(unittest.TestCase):
     def test_step_evaluationReturnsTerminated_returnsReward(self):
         # Given
         tileMasterMock = Mock(TileMaster)
-        tileMasterMock.tile_count = Mock(return_value=1)
+        tileMasterMock.count_tiles = Mock(return_value=1)
         tileMasterMock.evaluate = Mock(return_value=(tuple([0,0,0]), 1))
         sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
         sut.reset()
-        action = 3 # Place tile 1 on place 1
+        action = 4 # Place tile 1 on place 1
         expected = 1
+
+        # When
+        _, reward, _, _ = sut.step(action)
+
+        # Then
+        self.assertEqual(reward, expected)
+
+    def test_step_repeatedAction_returnsNegativeReward(self):
+        # Given
+        tileMasterMock = Mock(TileMaster)
+        tileMasterMock.count_tiles = Mock(return_value=1)
+        tileMasterMock.evaluate = Mock(return_value=(tuple([0,0,0]), 1))
+        sut = YoliGameEnv(size=3, tile_master=tileMasterMock)
+        sut.reset()
+        action = 4 # Place tile 1 on place 1
+        expected = -1
+        sut.step(action)
 
         # When
         _, reward, _, _ = sut.step(action)

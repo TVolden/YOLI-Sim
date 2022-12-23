@@ -7,8 +7,6 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-from .onehotgenerator import OneHotGenerator
-
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
@@ -57,8 +55,6 @@ class YoliGameEnv(gym.Env):
         return observation
 
     def _unpack_action(self, action):
-        pos = None
-        tile = None
         # Find coordinate
         pos = action % (self.size)
         tile = math.floor(action / self.size)
@@ -83,9 +79,8 @@ class YoliGameEnv(gym.Env):
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
 
-            reward = self._indications.count(1) / len(self._indications) / self._steps
-            if self._indications.count(2) > 0:
-                reward = 0
+            reward = self._indications.count(1) / len(self._indications)
+            #reward -= self._indications.count(2)
             if terminated:
                 reward = 1
         except:
