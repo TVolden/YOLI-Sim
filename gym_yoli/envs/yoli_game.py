@@ -7,20 +7,22 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
+from .rewarders import Rewarder, TerminatedRewarder
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo()):
+    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo(), rewarder: Rewarder = TerminatedRewarder(), shuffle=False):
         self.size = size
         self.master = tile_master
         self.tiles = tile_master.count_tiles()
         self.window_size = 512  # The size of the PyGame window
 
-        # One-hot encoding
         self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self.tiles+1),), dtype=np.uint8)
         self.action_space = spaces.Discrete(size * (self.tiles+1))
-
+        self.rewarder = rewarder
+        self.shuffle = shuffle
+        
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
 
@@ -45,9 +47,12 @@ class YoliGameEnv(gym.Env):
         self._indications = [0] * self.size
         self._notification = 0
         self._steps = 0
+        
+        if self.shuffle:
+            self.master.shuffle_tiles()
 
         observation = self._get_obs()
-        info = self._get_info()
+        #info = self._get_info()
 
         if self.render_mode == "human":
             self._render_frame()
@@ -79,13 +84,7 @@ class YoliGameEnv(gym.Env):
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
 
-            # Reward for each correct placements
-            reward = self._indications.count(1) / len(self._indications)
-
-            if self._indications.count(2) > 0:
-                reward = 0 # No rewards for a reject
-            if terminated:
-                reward = 1 # Full reward for completed game
+            reward = self.rewarder.reward(self._indications, terminated)
         except:
             reward = -1 # Negative reward for illegal move
 
