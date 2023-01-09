@@ -3,5 +3,5 @@ from gym.envs.registration import register
 register(
     id="gym_yoli/YoliGame-v0",
     entry_point="gym_yoli.envs:YoliGameEnv",
-    max_episode_steps=30_000_000
+    max_episode_steps=3_000
 )
