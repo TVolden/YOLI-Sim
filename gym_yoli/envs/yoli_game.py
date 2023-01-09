@@ -132,6 +132,7 @@ class YoliGameEnv(gym.Env):
         # Setup tile sprite
         tile_sprites = pygame.sprite.Group()
         
+        indication_colors = [(0,0,0), (0,255,0), (255,0,0)]
         # Setup board grid and tile objects
         for x in range(self.size):
             rect = (
@@ -142,9 +143,9 @@ class YoliGameEnv(gym.Env):
             )
             pygame.draw.rect(
                 canvas,
-                (0, 0, 0),
+                indication_colors[self._indications[x]],
                 rect,
-                1
+                2
             )
             pos = self._positions[x]
             if pos > 0:
