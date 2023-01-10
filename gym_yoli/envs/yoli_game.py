@@ -86,7 +86,7 @@ class YoliGameEnv(gym.Env):
 
             reward = self.rewarder.reward(self._indications, terminated, self._steps)
         except:
-            reward = -100 # Huge negative reward for illegal move
+            reward = -1000/self._steps # Huge negative reward for illegal move
             terminated = True # Terminate game
 
         observation = self._get_obs()
