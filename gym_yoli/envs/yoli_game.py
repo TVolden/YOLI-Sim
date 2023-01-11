@@ -7,21 +7,42 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-from .rewarders import Rewarder, TerminatedRewarder
+from .rewarders import Rewarder, FixedRewarder, TerminatedRewarder
+
+class YoliEnvConfiguration:
+    def __init__(self):
+        self.size = 5
+        self.rewarder = TerminatedRewarder()
+        self.shuffle = False
+        self.illegal_penalty = FixedRewarder(-1)
+        self.illegal_termination = False
 
 class YoliGameEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo(), rewarder: Rewarder = TerminatedRewarder(), shuffle=False):
+    def __init__(self, 
+                render_mode=None, 
+                size=5, 
+                tile_master: TileMaster = MatchTwo(), 
+                rewarder: Rewarder = TerminatedRewarder(), 
+                shuffle=False,
+                illegal_penalty:Rewarder = FixedRewarder(-10),
+                illegal_termination:bool = False
+        ):
+
         self.size = size
         self.master = tile_master
         self.tiles = tile_master.count_tiles()
         self.window_size = 512  # The size of the PyGame window
 
-        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self.tiles+1),), dtype=np.uint8)
-        self.action_space = spaces.Discrete(size * (self.tiles+1))
+        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (self.size * (self.tiles+1),), dtype=np.uint8)
+        self.action_space = spaces.Discrete(self.size * (self.tiles+1))
         self.rewarder = rewarder
         self.shuffle = shuffle
+        
+        # How to handle illegal moves
+        self.illegal_penalty = illegal_penalty
+        self.illegal_termination = illegal_termination
         
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -86,8 +107,8 @@ class YoliGameEnv(gym.Env):
 
             reward = self.rewarder.reward(self._indications, terminated, self._steps)
         except:
-            reward = -1000/self._steps # Huge negative reward for illegal move
-            terminated = True # Terminate game
+            terminated = self.illegal_termination
+            reward = self.illegal_penalty.reward(self._indications, terminated, self._steps)
 
         observation = self._get_obs()
         info = self._get_info()
