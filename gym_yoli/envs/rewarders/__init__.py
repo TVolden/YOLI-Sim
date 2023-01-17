@@ -5,4 +5,4 @@ from gym_yoli.envs.rewarders.terminated_rewarder import *
 from gym_yoli.envs.rewarders.steps_rewarder import *
 from gym_yoli.envs.rewarders.absent_penalty import *
 from gym_yoli.envs.rewarders.fixed_rewarder import *
-from gym_yoli.envs.rewarders.step_multiplier_decorator import *
+from gym_yoli.envs.rewarders.step_modifiers import *
