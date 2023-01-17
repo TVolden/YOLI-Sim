@@ -1,6 +1,10 @@
 import numpy as np
 
 class Rewarder:
-    # Acceptable return value range [0:1]
-    def reward(self, indications: np.array, terminated: bool, steps:int) -> float:
+    action_illegal = "Illegal"
+    action_add = "Add"
+    action_remove = "Remove"
+    actions = [action_add, action_remove, action_illegal]
+    
+    def reward(self, action:str, position:int, indications: np.array, terminated: bool, steps:int) -> float:
         pass

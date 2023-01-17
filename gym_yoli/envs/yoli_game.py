@@ -80,10 +80,14 @@ class YoliGameEnv(gym.Env):
 
         return observation
 
+    def _unpack_pos(self, action):
+        return action % (self.size)
+
     def _unpack_action(self, action):
         # Find coordinate
-        pos = action % (self.size)
+        pos = self._unpack_pos(action)
         tile = math.floor(action / self.size)
+
         if tile > 0 and self._positions[pos] != 0:
             raise Exception("Illegal action. Tiles can't be replaced with other tiles, only removed.")
         if tile == 0 and self._positions[pos] == 0:
@@ -104,11 +108,12 @@ class YoliGameEnv(gym.Env):
             self._indications, terminated = self.master.evaluate(board)
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
-
-            reward = self.rewarder.reward(self._indications, terminated, self._steps)
+           
+            action_type = Rewarder.action_remove if tile == 0 else Rewarder.action_add
+            reward = self.rewarder.reward(action_type, pos, self._indications, terminated, self._steps)
         except:
             terminated = self.illegal_termination
-            reward = self.illegal_penalty.reward(self._indications, terminated, self._steps)
+            reward = self.illegal_penalty.reward(Rewarder.action_illegal, self._unpack_pos(action), self._indications, terminated, self._steps)
 
         observation = self._get_obs()
         info = self._get_info()

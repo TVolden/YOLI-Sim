@@ -3,5 +3,7 @@ import numpy as np
 
 class AcceptedRewarder(Rewarder):
     accepted = 1
-    def reward(self, indications: np.array, _, __) -> float:
-        return indications.count(self.accepted) / len(indications)
+    def reward(self, action:str, position:int, indications: np.array, __, ___) -> float:
+        if action == Rewarder.action_add and indications[position] == self.accepted:
+            return 1
+        return 0

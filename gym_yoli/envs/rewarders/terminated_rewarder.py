@@ -10,7 +10,7 @@ class TerminatedRewardDecorator(Rewarder):
         self._decoratee = decoratee
         self._value = value
 
-    def reward(self, indications: np.array, terminated: bool, steps: int) -> float:
+    def reward(self, action:str, position:int, indications: np.array, terminated: bool, steps: int) -> float:
         if terminated:
             return self._value
-        return self._decoratee.reward(indications, terminated, steps)
+        return self._decoratee.reward(action, position, indications, terminated, steps)
