@@ -2,7 +2,7 @@ from .rewarder import Rewarder
 import numpy as np
 
 class TerminatedRewarder(Rewarder):
-    def reward(self, _, terminated: bool, __) -> float:
+    def reward(self, _, __, ___, terminated: bool, ____) -> float:
         return 1 if terminated else 0 # binary reward
 
 class TerminatedRewardDecorator(Rewarder):

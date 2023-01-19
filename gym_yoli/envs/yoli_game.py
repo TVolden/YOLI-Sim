@@ -26,7 +26,7 @@ class YoliGameEnv(gym.Env):
                 tile_master: TileMaster = MatchTwo(), 
                 rewarder: Rewarder = TerminatedRewarder(), 
                 shuffle=False,
-                illegal_penalty:Rewarder = FixedRewarder(-10),
+                illegal_penalty:Rewarder = FixedRewarder(-1),
                 illegal_termination:bool = False
         ):
 

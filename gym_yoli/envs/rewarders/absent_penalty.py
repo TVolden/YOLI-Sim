@@ -5,4 +5,4 @@ class AbsentPenalty(Rewarder):
     accepted = 1
 
     def reward(self, _, __, indications: np.array, ___, ____) -> float:
-        return indications.count(self.accepted) - len(indications)
+        return np.count_nonzero(indications == self.accepted) - len(indications)

@@ -9,6 +9,6 @@ class RejectPenaltyDecorator(Rewarder):
         self.penalty = penalty
 
     def reward(self, action:str, position:int, indications: np.array, terminated: bool, steps: int) -> float:
-        if indications.count(self.reject) > 0:
+        if np.count_nonzero(indications == self.reject) > 0:
             return self.penalty
         return self.decoratee.reward(action, position, indications, terminated, steps)
