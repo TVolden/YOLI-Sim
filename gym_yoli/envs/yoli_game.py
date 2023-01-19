@@ -110,7 +110,7 @@ class YoliGameEnv(gym.Env):
             self._notification = 1 if terminated else 0
            
             action_type = Rewarder.action_remove if tile == 0 else Rewarder.action_add
-            reward = self.rewarder.reward(action_type, pos, self._indications, terminated, self._steps)
+            reward = self.rewarder.reward(action_type, pos, np.array(self._indications), terminated, self._steps)
         except:
             terminated = self.illegal_termination
             reward = self.illegal_penalty.reward(Rewarder.action_illegal, self._unpack_pos(action), self._indications, terminated, self._steps)
