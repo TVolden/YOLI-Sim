@@ -18,10 +18,11 @@ class YoliEnvConfiguration:
         self.illegal_termination = False
 
 class YoliGameEnv(gym.Env):
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
+    render_modes = ["human", "rgb_array"]
+    metadata = {"render_modes": render_modes, "render.modes":render_modes, "render_fps": 4, "render.fps": 4}
 
     def __init__(self, 
-                render_mode=None, 
+                render_mode="rgb_array",
                 size=5, 
                 tile_master: TileMaster = MatchTwo(), 
                 rewarder: Rewarder = TerminatedRewarder(), 

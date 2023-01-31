@@ -12,6 +12,7 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.image = pygame.Surface((width, height))
             self.image.fill((255, 0, 0))
+            pygame.font.init()
             font = pygame.font.Font('freesansbold.ttf', 32)
             text = font.render("?", True, (0,0,0))
             textRect = text.get_rect()
