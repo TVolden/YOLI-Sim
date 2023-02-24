@@ -7,21 +7,50 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
+<<<<<<< HEAD:gym_yoli/envs/yoli_sim.py
 from gym_yoli.rewarders import Rewarder, TerminatedRewarder
 
 class YoliSimEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
+=======
+from .rewarders import Rewarder, FixedRewarder, TerminatedRewarder
 
-    def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo(), rewarder: Rewarder = TerminatedRewarder(), shuffle=False):
+class YoliEnvConfiguration:
+    def __init__(self):
+        self.size = 5
+        self.rewarder = TerminatedRewarder()
+        self.shuffle = False
+        self.illegal_penalty = FixedRewarder(-1)
+        self.illegal_termination = False
+
+class YoliGameEnv(gym.Env):
+    render_modes = ["human", "rgb_array"]
+    metadata = {"render_modes": render_modes, "render.modes":render_modes, "render_fps": 4, "render.fps": 4}
+
+    def __init__(self, 
+                render_mode="rgb_array",
+                size=5, 
+                tile_master: TileMaster = MatchTwo(), 
+                rewarder: Rewarder = TerminatedRewarder(), 
+                shuffle=False,
+                illegal_penalty:Rewarder = FixedRewarder(-1),
+                illegal_termination:bool = False
+        ):
+>>>>>>> d8ef66793e2d7b522d7a005a7bd1bb3ef8a31657:gym_yoli/envs/yoli_game.py
+
         self.size = size
         self.master = tile_master
         self.tiles = tile_master.count_tiles()
         self.window_size = 512  # The size of the PyGame window
 
-        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self.tiles+1),), dtype=np.uint8)
-        self.action_space = spaces.Discrete(size * (self.tiles+1))
+        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (self.size * (self.tiles+1),), dtype=np.uint8)
+        self.action_space = spaces.Discrete(self.size * (self.tiles+1))
         self.rewarder = rewarder
         self.shuffle = shuffle
+        
+        # How to handle illegal moves
+        self.illegal_penalty = illegal_penalty
+        self.illegal_termination = illegal_termination
         
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
@@ -59,10 +88,14 @@ class YoliSimEnv(gym.Env):
 
         return observation
 
+    def _unpack_pos(self, action):
+        return action % (self.size)
+
     def _unpack_action(self, action):
         # Find coordinate
-        pos = action % (self.size)
+        pos = self._unpack_pos(action)
         tile = math.floor(action / self.size)
+
         if tile > 0 and self._positions[pos] != 0:
             raise Exception("Illegal action. Tiles can't be replaced with other tiles, only removed.")
         if tile == 0 and self._positions[pos] == 0:
@@ -83,10 +116,12 @@ class YoliSimEnv(gym.Env):
             self._indications, terminated = self.master.evaluate(board)
             self._positions[np.where(np.array(self._indications)==2)]=0
             self._notification = 1 if terminated else 0
-
-            reward = self.rewarder.reward(self._indications, terminated)
+           
+            action_type = Rewarder.action_remove if tile == 0 else Rewarder.action_add
+            reward = self.rewarder.reward(action_type, pos, np.array(self._indications), terminated, self._steps)
         except:
-            reward = -1 # Negative reward for illegal move
+            terminated = self.illegal_termination
+            reward = self.illegal_penalty.reward(Rewarder.action_illegal, self._unpack_pos(action), self._indications, terminated, self._steps)
 
         observation = self._get_obs()
         info = self._get_info()
@@ -131,6 +166,10 @@ class YoliSimEnv(gym.Env):
 
         # Setup tile sprite
         tile_sprites = pygame.sprite.Group()
+<<<<<<< HEAD:gym_yoli/envs/yoli_sim.py
+=======
+        
+>>>>>>> d8ef66793e2d7b522d7a005a7bd1bb3ef8a31657:gym_yoli/envs/yoli_game.py
         indication_colors = [(0,0,0), (0,255,0), (255,0,0)]
         # Setup board grid and tile objects
         for x in range(self.size):
