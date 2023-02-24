@@ -7,9 +7,9 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-from .rewarders import Rewarder, TerminatedRewarder
+from gym_yoli.rewarders import Rewarder, TerminatedRewarder
 
-class YoliGameEnv(gym.Env):
+class YoliSimEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode=None, size=5, tile_master: TileMaster = MatchTwo(), rewarder: Rewarder = TerminatedRewarder(), shuffle=False):
@@ -131,7 +131,7 @@ class YoliGameEnv(gym.Env):
 
         # Setup tile sprite
         tile_sprites = pygame.sprite.Group()
-        
+        indication_colors = [(0,0,0), (0,255,0), (255,0,0)]
         # Setup board grid and tile objects
         for x in range(self.size):
             rect = (
@@ -142,9 +142,9 @@ class YoliGameEnv(gym.Env):
             )
             pygame.draw.rect(
                 canvas,
-                (0, 0, 0),
+                indication_colors[self._indications[x]],
                 rect,
-                1
+                2
             )
             pos = self._positions[x]
             if pos > 0:
