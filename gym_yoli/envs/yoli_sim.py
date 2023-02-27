@@ -7,13 +7,7 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-<<<<<<< HEAD:gym_yoli/envs/yoli_sim.py
-from gym_yoli.rewarders import Rewarder, TerminatedRewarder
-
-class YoliSimEnv(gym.Env):
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
-=======
-from .rewarders import Rewarder, FixedRewarder, TerminatedRewarder
+from gym_yoli.rewarders import Rewarder, TerminatedRewarder, FixedRewarder
 
 class YoliEnvConfiguration:
     def __init__(self):
@@ -23,7 +17,7 @@ class YoliEnvConfiguration:
         self.illegal_penalty = FixedRewarder(-1)
         self.illegal_termination = False
 
-class YoliGameEnv(gym.Env):
+class YoliSimEnv(gym.Env):
     render_modes = ["human", "rgb_array"]
     metadata = {"render_modes": render_modes, "render.modes":render_modes, "render_fps": 4, "render.fps": 4}
 
@@ -36,7 +30,6 @@ class YoliGameEnv(gym.Env):
                 illegal_penalty:Rewarder = FixedRewarder(-1),
                 illegal_termination:bool = False
         ):
->>>>>>> d8ef66793e2d7b522d7a005a7bd1bb3ef8a31657:gym_yoli/envs/yoli_game.py
 
         self.size = size
         self.master = tile_master
@@ -166,10 +159,6 @@ class YoliGameEnv(gym.Env):
 
         # Setup tile sprite
         tile_sprites = pygame.sprite.Group()
-<<<<<<< HEAD:gym_yoli/envs/yoli_sim.py
-=======
-        
->>>>>>> d8ef66793e2d7b522d7a005a7bd1bb3ef8a31657:gym_yoli/envs/yoli_game.py
         indication_colors = [(0,0,0), (0,255,0), (255,0,0)]
         # Setup board grid and tile objects
         for x in range(self.size):
