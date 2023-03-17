@@ -1,4 +1,4 @@
-from gym_yoli.matchers import Matcher
+from yoli_sim.matchers import Matcher
 
 class MatchAllByFirstValue(Matcher):
     def __init__(self, match_key):

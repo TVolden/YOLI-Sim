@@ -7,7 +7,7 @@ import math
 from .tile import Tile
 from .tile_master import TileMaster
 from .match import MatchTwo
-from gym_yoli.rewarders import Rewarder, TerminatedRewarder, FixedRewarder
+from yoli_sim.rewarders import Rewarder, TerminatedRewarder, FixedRewarder
 
 class YoliEnvConfiguration:
     def __init__(self):

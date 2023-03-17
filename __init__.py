@@ -1,2 +1,2 @@
 from .test import *
-from .gym_yoli import *
+from .yoli_sim import *

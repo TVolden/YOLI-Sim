@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gym_yoli.envs.rewarders import AcceptedRewarder, Rewarder
+from yoli_sim.rewarders import AcceptedRewarder, Rewarder
 
 class TestAcceptedRewarder(unittest.TestCase):
     def test_reward_addedTileAccepted_returnsOne(self):

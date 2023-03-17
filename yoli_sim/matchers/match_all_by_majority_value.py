@@ -1,4 +1,4 @@
-from gym_yoli.matchers import Matcher
+from yoli_sim.matchers import Matcher
 
 class MatchAllByMajorityValue(Matcher):
     def __init__(self, match_key):

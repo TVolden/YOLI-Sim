@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 import numpy as np
-from gym_yoli.envs.rewarders import Rewarder, RejectPenaltyDecorator
+from yoli_sim.rewarders import Rewarder, RejectPenaltyDecorator
 
 class TestRejectPenaltyDecorator(unittest.TestCase):
     def test_reward_noRejects_callsRewardOnDecoratee(self):

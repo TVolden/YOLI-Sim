@@ -1,4 +1,4 @@
-from gym_yoli.matchers import Matcher, LogicalOperator
+from yoli_sim.matchers import Matcher, LogicalOperator
 
 class AndOperator (LogicalOperator):
     def compare(self, first: int, second: int) -> int:

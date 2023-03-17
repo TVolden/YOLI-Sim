@@ -1,8 +1,8 @@
 import unittest
 import numpy.testing
 from unittest.mock import Mock
-from gym_yoli.envs.yoli_game import YoliGameEnv
-from gym_yoli.envs.tile_master import TileMaster
+from yoli_sim.envs.yoli_sim import YoliSimEnv
+from yoli_sim.envs.tile_master import TileMaster
 
 class TestYoliGameEnv(unittest.TestCase):
     def test_instantiate_callsTileCountOnTileMaster(self):

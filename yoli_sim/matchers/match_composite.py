@@ -1,4 +1,4 @@
-from gym_yoli.matchers import Matcher, LogicalOperator, AndOperator
+from yoli_sim.matchers import Matcher, LogicalOperator, AndOperator
 
 class MatchComposite(Matcher):
     def __init__(self, matchers:list, logical_operator:LogicalOperator = AndOperator()):

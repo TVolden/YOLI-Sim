@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 import numpy as np
-from gym_yoli.envs.rewarders import Rewarder, StepMultiplierDecorator, DivideByStepDecorator
+from yoli_sim.rewarders import Rewarder, StepMultiplierDecorator, DivideByStepDecorator
 
 class TestStepMultiplierDecorator(unittest.TestCase):
     def test_reward_callsRewardOnDecoratee(self):

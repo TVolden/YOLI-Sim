@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from unittest.mock import Mock
-from gym_yoli.envs.rewarders import Rewarder, TerminatedRewarder, TerminatedRewardDecorator
+from yoli_sim.rewarders import Rewarder, TerminatedRewarder, TerminatedRewardDecorator
 
 class TestTerminatedRewarder(unittest.TestCase):
     def test_reward_terminatedFalse_returnsZero(self):

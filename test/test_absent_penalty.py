@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gym_yoli.envs.rewarders import AbsentPenalty
+from yoli_sim.envs.rewarders import AbsentPenalty
 
 class TestAbsentPenalty(unittest.TestCase):
     def test_reward_noneAccepted_returnsMinusTheLength(self):

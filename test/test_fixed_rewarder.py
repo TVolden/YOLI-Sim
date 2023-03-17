@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gym_yoli.envs.rewarders import FixedRewarder
+from yoli_sim.rewarders import FixedRewarder
 
 class TestFixedRewarder(unittest.TestCase):
     def test_reward_initializedWithOne_returnsOne(self):

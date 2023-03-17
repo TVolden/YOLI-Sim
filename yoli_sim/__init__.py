@@ -5,6 +5,6 @@ from .utils import *
 
 register(
     id="gym_yoli/YoliSim-v0",
-    entry_point="gym_yoli.envs:YoliSimEnv",
+    entry_point="yoli_sim.envs:YoliSimEnv",
     max_episode_steps=100
 )

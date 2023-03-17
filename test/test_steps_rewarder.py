@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from gym_yoli.envs.rewarders import StepsRewarder, Rewarder
+from yoli_sim.rewarders import StepsRewarder, Rewarder
 
 class TestStepsRewarder(unittest.TestCase):
     def test_reward_default_returnsNegativeSteps(self):
