@@ -20,4 +20,5 @@ class YoliBoardAnalyzer:
         hash_sum = 0
         for i, b in enumerate(board[0]):
             if b == 1:
-                
+                pass
+        return -1 # TODO: Implement
