@@ -14,3 +14,10 @@ class YoliBoardAnalyzer:
             if board[0][i*stride] == 0:
                 count += 1
         return count
+    
+    def hash(self, board: np.array):
+        segment_size = int(board.size / self.board_size)
+        hash_sum = 0
+        for i, b in enumerate(board[0]):
+            if b == 1:
+                
