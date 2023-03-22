@@ -14,21 +14,24 @@ class YoliBoardSim:
     def available_tiles(self) -> tuple():
         return tuple([tile for tile in range(1, self.no_tiles + 1) if tile not in self.positions])
     
-    def __init__(self, size, tile_master:YoliTileGame):
+    def __init__(self, size, game:YoliTileGame):
         self.size = size
-        self.set_game(tile_master)
+        self.set_game(game)
         self.reset()
 
-    def set_game(self, tile_master:YoliTileGame):
-        self._game = tile_master
-        self.no_tiles = tile_master.count_tiles()
+    def set_game(self, game:YoliTileGame):
+        self._game = game
+        self.no_tiles = game.count_tiles()
 
     def is_tile_available(self, tile):
         return tile in self.available_tiles
 
     def position_occupied(self, pos) -> bool:
         return self._positions[pos] != 0
-
+    
+    def get_tile(self, tileIndex):
+        return self._game.tile_at(tileIndex - 1)
+    
     def get_tile_at(self, pos) -> YoliTile:
         tile = self._positions[pos]
         if tile == 0:

@@ -4,15 +4,15 @@ from abc import ABC, abstractproperty, abstractclassmethod
 class YoliTile:
     @property
     def name(self):
-        return self.name
+        return self._name
     
     @property
     def image(self):
-        return self.image
+        return self._image
 
     def __init__(self, name, image):
-        self.name = name
-        self.image = image
+        self._name = name
+        self._image = image
 
 class YoliTileGame(ABC):
     ACCEPTED = 1

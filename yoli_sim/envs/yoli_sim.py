@@ -164,10 +164,9 @@ class YoliSimEnv(gym.Env):
                 rect,
                 2
             )
-            pos = self._sim.positions[x]
-            if pos > 0:
-                tile = pos - 1
-                img = self._sim._game.tile_image_at(tile) if self.tiles > tile else ""
+            tile = self._sim.get_tile_at(x)
+            if tile is not None:
+                img = tile.image
                 object_ = Tile(img, board_pix_square_size-margin-padding, board_pix_square_size-margin-padding)
                 object_.rect.x = x * board_pix_square_size + margin / 2 + padding / 2
                 object_.rect.y = margin / 2 + padding / 2
@@ -189,10 +188,10 @@ class YoliSimEnv(gym.Env):
                 rect,
                 1
             )
-            pos = x+1
-            if pos not in self._sim.positions:
-                tile = pos - 1
-                img = self._sim._game.tile_image_at(tile) if self.tiles > tile else ""
+            tileIndex = x + 1
+            tile = self._sim.get_tile(tileIndex)
+            if tile is not None:
+                img = tile.image
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
                 object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + padding / 2
