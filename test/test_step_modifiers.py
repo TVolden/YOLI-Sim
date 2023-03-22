@@ -63,7 +63,7 @@ class TestStepDivideByStepDecorator(unittest.TestCase):
         decorateeMock = Mock(Rewarder)
         decorateeMock.reward = Mock(return_value=0)
         terminated = False
-        steps = 0
+        steps = 1
         action = "Any action"
         position = 0
         indications = np.array([0,0,0,0,0])

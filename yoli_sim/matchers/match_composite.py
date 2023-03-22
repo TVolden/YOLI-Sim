@@ -6,7 +6,7 @@ class MatchComposite(Matcher):
         self.matchers = matchers
 
     def match(self, tiles:tuple) -> tuple:
-        output = [self.SKIPPED] * len(tiles)
+        output = [self.ignored] * len(tiles)
         for matcher in self.matchers:
             result = matcher.match(tiles)
             for i in range(len(output)):

@@ -5,7 +5,7 @@ class MatchAllByMajorityValue(Matcher):
         self.key = match_key
 
     def match(self, tiles:tuple) -> tuple:
-        output = [self.FAILED]*len(tiles)
+        output = [self.rejected]*len(tiles)
         values = [tile.get(self.key) if tile is not None or self.key not in tile.keys() else None for tile in tiles]
         majority_value = None
         majority_count = 0
@@ -16,7 +16,7 @@ class MatchAllByMajorityValue(Matcher):
                 
         for i in range(len(tiles)):
             if tiles[i] is None:
-                output[i] = self.SKIPPED
+                output[i] = self.ignored
             elif self.key in tiles[i].keys() and tiles[i].get(self.key) == majority_value:
-                output[i] = self.PASSED
+                output[i] = self.accepted
         return tuple(output)

@@ -3,9 +3,9 @@ from yoli_sim.matchers import Matcher, LogicalOperator
 class AndOperator (LogicalOperator):
     def compare(self, first: int, second: int) -> int:
         if first != second:
-            if first == 0:
+            if first == self.ignored:
                 return second
-            if second == 0:
+            if second == self.ignored:
                 return first
-            return Matcher.FAILED
+            return self.rejected
         return first

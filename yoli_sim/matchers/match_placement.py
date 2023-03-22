@@ -5,10 +5,10 @@ class MatchPlacement(Matcher):
         self.key = match_key
 
     def match(self, tiles:tuple) -> tuple:
-        output = [self.FAILED]*len(tiles)
+        output = [self.rejected]*len(tiles)
         for i in range(len(tiles)):
             if tiles[i] is None:
-                output[i] = self.SKIPPED
+                output[i] = self.ignored
             elif self.key in tiles[i].keys() and tiles[i].get(self.key) == i:
-                output[i] = self.PASSED
+                output[i] = self.accepted
         return tuple(output)

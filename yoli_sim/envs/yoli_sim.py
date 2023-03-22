@@ -5,8 +5,7 @@ import pygame
 import numpy as np
 import math
 from .tile import Tile
-from .tile_master import TileMaster
-from .match import MatchTwo
+from yoli_sim import YoliTileGame, MatchTwo, YoliBoardSim
 from yoli_sim.rewarders import Rewarder, TerminatedRewarder, FixedRewarder
 
 class YoliEnvConfiguration:
@@ -24,20 +23,17 @@ class YoliSimEnv(gym.Env):
     def __init__(self, 
                 render_mode="rgb_array",
                 size=5, 
-                tile_master: TileMaster = MatchTwo(), 
+                game: YoliTileGame = MatchTwo(), 
                 rewarder: Rewarder = TerminatedRewarder(), 
                 shuffle=False,
                 illegal_penalty:Rewarder = FixedRewarder(-1),
                 illegal_termination:bool = False
         ):
-
-        self.size = size
-        self.master = tile_master
-        self.tiles = tile_master.count_tiles()
+        self._sim = YoliBoardSim(size, game)
         self.window_size = 512  # The size of the PyGame window
 
-        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (self.size * (self.tiles+1),), dtype=np.uint8)
-        self.action_space = spaces.Discrete(self.size * (self.tiles+1))
+        self.observation_space = spaces.Box(low = 0,  high = 1, shape = (size * (self._sim.no_tiles+1),), dtype=np.uint8)
+        self.action_space = spaces.Discrete(size * (self._sim.no_tiles+1))
         self.rewarder = rewarder
         self.shuffle = shuffle
         
@@ -50,35 +46,36 @@ class YoliSimEnv(gym.Env):
 
         self.window = None
         self.clock = None
-
+        
+        # aliases
+        self.tiles = self._sim.no_tiles
+        self.size = self._sim.size
+        
     def _get_obs(self):
         oh = np.zeros((self.size, self.tiles + 1), dtype=np.uint8)
-        oh[range(self.size), self._positions] = 1
+        oh[range(self.size), self._sim.positions] = 1
         return oh.flatten()
 
     def _get_info(self):
         return {
-            "notification": self._notification, #global notification, 0=nothing, 1=success, 2=failure
-            "indications": tuple(self._indications) #0=nothing, 1=indicated, 2=rejected
+            "notification": self._sim.notification, #global notification, 0=nothing, 1=success, 2=failure
+            "indications": tuple(self._sim.indications) #0=nothing, 1=indicated, 2=rejected
         }
 
     def reset(self, seed=None, options=None):
         #super().reset(seed=seed)
-
-        self._positions = np.array([0] * self.size)
-        self._indications = [0] * self.size
-        self._notification = 0
+        
+        self._sim.reset()
         self._steps = 0
         
         if self.shuffle:
-            self.master.shuffle_tiles()
+            self._sim.shuffle_tiles()
 
         observation = self._get_obs()
         #info = self._get_info()
 
         if self.render_mode == "human":
             self._render_frame()
-
         return observation
 
     def _unpack_pos(self, action):
@@ -87,14 +84,7 @@ class YoliSimEnv(gym.Env):
     def _unpack_action(self, action):
         # Find coordinate
         pos = self._unpack_pos(action)
-        tile = math.floor(action / self.size)
-
-        if tile > 0 and self._positions[pos] != 0:
-            raise Exception("Illegal action. Tiles can't be replaced with other tiles, only removed.")
-        if tile == 0 and self._positions[pos] == 0:
-            raise Exception("Illegal action. No tile to remove.")
-        if tile > 0 and np.count_nonzero(self._positions == tile) > 0:
-            raise Exception("Illegal action. Tile already placed.")
+        tile = math.floor(action / self.size)        
         return pos, tile
     
     def step(self, action):
@@ -104,17 +94,13 @@ class YoliSimEnv(gym.Env):
 
         try:
             pos, tile = self._unpack_action(action)
-            self._positions[pos] = tile
-            board = [i-1 if i > 0 else None for i in self._positions]
-            self._indications, terminated = self.master.evaluate(board)
-            self._positions[np.where(np.array(self._indications)==2)]=0
-            self._notification = 1 if terminated else 0
-           
+            self._sim.step(pos, tile)
+            terminated = self._sim.terminated
             action_type = Rewarder.action_remove if tile == 0 else Rewarder.action_add
-            reward = self.rewarder.reward(action_type, pos, np.array(self._indications), terminated, self._steps)
+            reward = self.rewarder.reward(action_type, pos, np.array(self._sim.indications), terminated, self._steps)
         except:
             terminated = self.illegal_termination
-            reward = self.illegal_penalty.reward(Rewarder.action_illegal, self._unpack_pos(action), self._indications, terminated, self._steps)
+            reward = self.illegal_penalty.reward(Rewarder.action_illegal, self._unpack_pos(action), self._sim.indications, terminated, self._steps)
 
         observation = self._get_obs()
         info = self._get_info()
@@ -174,14 +160,14 @@ class YoliSimEnv(gym.Env):
             )
             pygame.draw.rect(
                 canvas,
-                indication_colors[self._indications[x]],
+                indication_colors[self._sim.indications[x]],
                 rect,
                 2
             )
-            pos = self._positions[x]
+            pos = self._sim.positions[x]
             if pos > 0:
                 tile = pos - 1
-                img = self.master.tile_image_at(tile) if self.tiles > tile else ""
+                img = self._sim._game.tile_image_at(tile) if self.tiles > tile else ""
                 object_ = Tile(img, board_pix_square_size-margin-padding, board_pix_square_size-margin-padding)
                 object_.rect.x = x * board_pix_square_size + margin / 2 + padding / 2
                 object_.rect.y = margin / 2 + padding / 2
@@ -204,9 +190,9 @@ class YoliSimEnv(gym.Env):
                 1
             )
             pos = x+1
-            if pos not in self._positions:
+            if pos not in self._sim.positions:
                 tile = pos - 1
-                img = self.master.tile_image_at(tile) if self.tiles > tile else ""
+                img = self._sim._game.tile_image_at(tile) if self.tiles > tile else ""
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
                 object_.rect.y = row * tile_pix_square_size + board_pix_square_size + margin / 2 + padding / 2

@@ -1,14 +1,11 @@
-from .tile_master import TileMaster
+from yoli_sim import YoliTileGame, YoliTile
 
-class MatchTwo (TileMaster):
+class MatchTwo (YoliTileGame):
     def __init__(self, tiles = 4):
-        self._tiles = [{"image": f"tiles\\{x:02}.png", "group": int((x)/2+0.5)} for x in range(1, tiles+1)]
+        self._tiles = [{"image": f"{x:02}.png", "group": int((x)/2+0.5)} for x in range(1, tiles+1)]
 
-    def tile_at(self, index:int) -> dict():
-        return self._tiles[index]
-
-    def tile_image_at(self, position: int) -> str:
-        return self.tile_at(position).get("image")
+    def tile_at(self, index:int) -> YoliTile:
+        return YoliTile(f"{index}", self._tiles[index].get("image"))
 
     def count_tiles(self) -> int:
         return len(self._tiles)
@@ -29,11 +26,11 @@ class MatchTwo (TileMaster):
             if tile is not None:
                 if group is None:
                     group = tile.get("group")
-                    indication[i] = 1 # Accept
+                    indication[i] = YoliTileGame.ACCEPTED
                 elif group != tile.get("group"):
-                    indication[i] = 2 # Rejected
+                    indication[i] = YoliTileGame.REJECTED
                 else:
-                    indication[i] = 1 # Accept
+                    indication[i] = YoliTileGame.ACCEPTED
                     terminal = True # Win
         
         return tuple(indication), terminal
