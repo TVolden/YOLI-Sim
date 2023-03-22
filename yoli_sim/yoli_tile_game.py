@@ -3,11 +3,11 @@ from abc import ABC, abstractproperty, abstractclassmethod
 
 class YoliTile:
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
     
     @property
-    def image(self):
+    def image(self) -> str:
         return self._image
 
     def __init__(self, name, image):
