@@ -1,7 +1,8 @@
 from yoli_sim.matchers import Matcher
 
 class NoRepeatedValue(Matcher):
-    def __init__(self, match_key):
+    def __init__(self, match_key, accepted_value=1, ignored_value=0, rejected_value=-1):
+        super().__init__(accepted_value, ignored_value, rejected_value)
         self.key = match_key
 
     def match(self, tiles:tuple) -> tuple:

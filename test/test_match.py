@@ -1,5 +1,5 @@
 import unittest
-from yoli_sim.envs.match import MatchTwo
+from yoli_sim.match_two import MatchTwo
 
 class TestMatchTwo(unittest.TestCase):
     def test_evaluate_inputLength_matchesOutputLength(self):
