@@ -1,8 +1,8 @@
 from yoli_sim.gamerules import GameRule
 
 class ExclusionConstraint(GameRule):
-    def __init__(self, exclusion_key:str, exclusion_value:str, accepted_value=1, ignored_value=0, rejected_value=-1):
-        super().__init__(accepted_value, ignored_value, rejected_value)
+    def __init__(self, exclusion_key:str, exclusion_value:str):
+        super().__init__()
         self._exclusion_key = exclusion_key
         self._exclusion_value = exclusion_value
     
