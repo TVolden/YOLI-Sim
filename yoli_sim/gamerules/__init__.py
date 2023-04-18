@@ -3,3 +3,4 @@ from .population_constraint import *
 from .neighbor_constraint import *
 
 from .exclusion_constraint import *
+from .match_constraint import *
