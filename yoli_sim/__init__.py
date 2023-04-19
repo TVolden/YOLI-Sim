@@ -5,6 +5,7 @@ from .utils import *
 from .yoli_tile_game import *
 from .match_two import *
 from .yoli_board_sim import *
+from .gamerules import *
 
 register(
     id="gym_yoli/YoliSim-v0",
