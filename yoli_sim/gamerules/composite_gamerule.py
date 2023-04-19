@@ -12,5 +12,5 @@ class CompositeGameRule(GameRule):
         for rule in self._rules:
             result = rule.evaluate(tiles)
             for i in range(len(output)):
-                output[i] = self.operator.compare(output[i], result[i])
+                output[i] = self._comparer.compare(output[i], result[i])
         return tuple(output)

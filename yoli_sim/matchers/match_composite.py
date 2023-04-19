@@ -3,6 +3,7 @@ from yoli_sim.utils import LogicalOperator, AndOperator
 
 class MatchComposite(Matcher):
     def __init__(self, matchers:list, logical_operator:LogicalOperator = AndOperator()):
+        super().__init__()
         self.operator = logical_operator
         self.matchers = matchers
 

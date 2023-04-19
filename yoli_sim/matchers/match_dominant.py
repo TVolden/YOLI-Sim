@@ -2,6 +2,7 @@ from yoli_sim.matchers import Matcher
 
 class MatchDominant(Matcher):
     def __init__(self, matchers:list):
+        super().__init__()
         self.matchers = matchers
 
     def match(self, tiles:tuple) -> tuple:
