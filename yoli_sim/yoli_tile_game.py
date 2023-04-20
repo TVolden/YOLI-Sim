@@ -19,12 +19,16 @@ class YoliTileGame(ABC):
     IGNORED = 0
     REJECTED = -1
     
+    """Return a tile representation."""
     @abstractclassmethod
     def tile_at(self, position:int) -> YoliTile:
         ...
     
+    """Evaluate a board composition using internal tile indexes. 
+    Returns tuple with evaluation results: -1 (rejected), 0 (ignored), 1 (accepted) 
+    and if the game has terminated."""
     @abstractclassmethod
-    def evaluate(self, positions: tuple()) -> tuple():
+    def evaluate(self, positions: tuple[int,...]) -> tuple[tuple[int,...], bool]:
         ...        
 
     def __init__(self):
