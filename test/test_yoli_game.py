@@ -106,7 +106,7 @@ class TestYoliGameEnv(unittest.TestCase):
         # Given
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
-        gameMock.evaluate = Mock(return_value=(tuple([0,2,0]), 0))
+        gameMock.evaluate = Mock(return_value=(tuple([0,-1,0]), 0))
         sut = YoliSimEnv(size=3, game=gameMock)
         sut.reset()
         action = 4 # Place tile 1 on place 1

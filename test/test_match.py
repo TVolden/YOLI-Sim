@@ -54,7 +54,7 @@ class TestMatchTwo(unittest.TestCase):
         # Given
         sut = MatchTwo()
         board = [1, 3] + [None] * 3
-        expected = (1,2,0,0,0)
+        expected = (1,-1,0,0,0)
 
         # When
         indications, _ = sut.evaluate(board)
@@ -90,7 +90,7 @@ class TestMatchTwo(unittest.TestCase):
         # Given
         sut = MatchTwo()
         board = [0, 2, 1] + [None] * 2
-        expected = (1,2,1,0,0)
+        expected = (1,-1,1,0,0)
 
         # When
         indications, _ = sut.evaluate(board)
