@@ -1,8 +1,9 @@
 from yoli_sim.gamerules import GameRule
+from yoli_sim.pcg import GameRuleFactory, GameRuleConstructionVisitor
 
 class ExclusiveConstraint(GameRule):
-    def __init__(self, allowed_key:str, allowed_value:str, accepted_value=1, ignored_value=0, rejected_value=-1):
-        super().__init__(accepted_value, ignored_value, rejected_value)
+    def __init__(self, allowed_key:str, allowed_value:str):
+        super().__init__()
         self._allowed_key = allowed_key
         self._allowed_value = allowed_value
     
@@ -11,3 +12,9 @@ class ExclusiveConstraint(GameRule):
                        tile[self._allowed_key]==self._allowed_value \
                        else -1 \
                         for tile in tiles])
+
+class ExclusiveConstraintFactory(GameRuleFactory):
+    def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
+        key = visitor.property_key()
+        value = visitor.property_value(key)
+        return ExclusiveConstraint(key, value)
