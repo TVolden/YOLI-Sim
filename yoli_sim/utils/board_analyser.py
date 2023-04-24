@@ -16,9 +16,9 @@ class YoliBoardAnalyzer:
         return count
     
     def hash(self, board: np.array):
-        segment_size = int(board.size / self.board_size)
-        hash_sum = 0
-        for i, b in enumerate(board[0]):
-            if b == 1:
-                pass
+        # segment_size = int(board.size / self.board_size)
+        # hash_sum = 0
+        # for i, b in enumerate(board):
+        #     if b == 1:
+        #         pass
         return -1 # TODO: Implement
