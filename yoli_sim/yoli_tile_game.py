@@ -1,5 +1,5 @@
 import random
-from abc import ABC, abstractproperty, abstractclassmethod
+from abc import ABC, abstractproperty, abstractmethod
 
 class YoliTile:
     @property
@@ -20,19 +20,27 @@ class YoliTileGame(ABC):
     REJECTED = -1
     
     """Return a tile representation."""
-    @abstractclassmethod
+    @abstractmethod
     def tile_at(self, position:int) -> YoliTile:
         ...
     
     """Evaluate a board composition using internal tile indexes. 
     Returns tuple with evaluation results: -1 (rejected), 0 (ignored), 1 (accepted) 
     and if the game has terminated."""
-    @abstractclassmethod
-    def evaluate(self, positions: tuple[int,...]) -> tuple[tuple[int,...], bool]:
-        ...        
+    @abstractmethod
+    def _evaluate(self, board: tuple[dict,...]) -> tuple[tuple[int,...], bool]:
+        ...
+
+    @abstractmethod
+    def reset(self):
+        ...
 
     def __init__(self):
         self._tiles = []
+
+    def evaluate(self, positions: tuple[int,...]) -> tuple[tuple[int,...], bool]:
+        tiles = [None if i is None else self._tiles[i] for i in positions]
+        return self._evaluate(tiles)
 
     def count_tiles(self) -> int:
         return len(self._tiles)
