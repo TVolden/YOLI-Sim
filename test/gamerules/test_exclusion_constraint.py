@@ -96,3 +96,16 @@ class TestExclusionConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result[2], expected)
+
+    def test_toString_returnsStr(self):
+        # Given
+        key = "exclude"
+        value = "true"
+        sut = ExclusionConstraint(key, value)
+        expected = f"Exclude any where {key} is equal to {value}"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)

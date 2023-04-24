@@ -73,3 +73,17 @@ class TestPopulationConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected)
+
+    def test_toString_returnsStr(self):
+        # Given
+        limit = 1
+        key = "test"
+        value = "test"
+        sut = PopulationConstraint(limit, key, value)
+        expected = f"There can only be {limit} with {key} set to {value}"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)

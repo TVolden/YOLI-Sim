@@ -98,3 +98,19 @@ class TestNeighborConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected)
+
+    def test_toString_returnsStr(self):
+        # Given
+        triggered_key = "triggerable"
+        triggered_value = "true"
+        trigger_key = "trigger"
+        trigger_value = "true"
+        sut = NeighborConstraint(triggered_key, triggered_value, \
+                                 trigger_key, trigger_value)
+        expected = f"Those with {triggered_key} set to {triggered_value} cannot be adjacent to those with {trigger_key} set to {trigger_value}"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)

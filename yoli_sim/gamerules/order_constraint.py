@@ -9,3 +9,6 @@ class OrderConstraint(GameRule):
     
     def evaluate(self, tiles: tuple[dict, ...]) -> tuple[int, ...]:
         return self._matcher.match(tiles)
+    
+    def __str__(self) -> str:
+        return f"The value of {self._order_key} has to match the position on the board"

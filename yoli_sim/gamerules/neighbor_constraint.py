@@ -22,6 +22,9 @@ class NeighborConstraint(GameRule):
                 eval.append(0)
         return tuple(eval)
     
+    def __str__(self) -> str:
+        return f"Those with {self._triggered_key} set to {self._triggered_value} cannot be adjacent to those with {self._trigger_key} set to {self._trigger_value}"
+    
     def conflicting_neighbors(self, tiles, index):
         return [tile[self._trigger_key]==self._trigger_value \
          for tile in self.get_neighbors(tiles, index) \

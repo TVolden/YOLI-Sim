@@ -23,6 +23,9 @@ class PopulationConstraint(GameRule):
         
         return tuple(evaluation)
     
+    def __str__(self) -> str:
+        return f"There can only be {self._limit} with {self._key} set to {self._value}"
+    
 class PopulationConstraintFactory(GameRuleFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
         limit = visitor.decimal(1,4)

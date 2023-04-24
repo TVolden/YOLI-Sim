@@ -9,3 +9,7 @@ class GameRule (ABC):
     @abstractmethod
     def evaluate(self, tiles:tuple[dict, ...]) -> tuple[int, ...]:
         ...
+
+    @abstractmethod
+    def __str__(self) -> str:
+        ...

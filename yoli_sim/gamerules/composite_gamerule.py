@@ -14,3 +14,8 @@ class CompositeGameRule(GameRule):
             for i in range(len(output)):
                 output[i] = self._comparer.compare(output[i], result[i])
         return tuple(output)
+    
+    def __str__(self) -> str:
+        rules = [f"{rule} {self._comparer}" for rule in self._rules]
+        out = ' '.join(rules)
+        return out[:-len(str(self._comparer))-1]

@@ -9,3 +9,7 @@ class LogicalOperator (ABC):
     @abstractmethod
     def compare(self, first:int, second:int) -> int:
         ...
+
+    @abstractmethod
+    def __str__(self) -> str:
+        ...

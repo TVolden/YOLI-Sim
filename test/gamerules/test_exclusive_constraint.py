@@ -65,3 +65,16 @@ class TestExclusiveConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result, expected)
+    
+    def test_toString_returnsStr(self):
+        # Given
+        key = "required"
+        value = "true"
+        sut = ExclusiveConstraint(key, value)
+        expected = f"Exclusively for any where {key} is equal to {value}"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)

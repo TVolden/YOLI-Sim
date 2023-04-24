@@ -16,6 +16,9 @@ class ExclusionConstraint(GameRule):
             return self.rejected
         return self.ignored
     
+    def __str__(self) -> str:
+        return f"Exclude any where {self._exclusion_key} is equal to {self._exclusion_value}"
+    
 class ExclusionConstraintFactory(GameRuleFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
         key = visitor.property_key()

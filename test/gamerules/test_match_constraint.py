@@ -54,3 +54,15 @@ class TestMatchConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result[1], expected)
+    
+    def test_toString_returnsStr(self):
+        # Given
+        key = "required"
+        sut = MatchConstraint(key)
+        expected = f"Only the ones where the value of {key} match"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)

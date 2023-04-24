@@ -9,3 +9,6 @@ class AndOperator (LogicalOperator):
                 return first
             return self.rejected
         return first
+    
+    def __str__(self) -> str:
+        return "and"

@@ -90,3 +90,15 @@ class TestOrderConstraint(unittest.TestCase):
 
         # Then
         self.assertEqual(result[2], expected)
+
+    def test_toString_returnsStr(self):
+        # Given
+        key = "required"
+        sut = OrderConstraint(key)
+        expected = f"The value of {key} has to match the position on the board"
+
+        # When
+        result = str(sut)
+
+        # Then
+        self.assertEqual(result, expected)
