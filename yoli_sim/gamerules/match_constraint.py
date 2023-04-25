@@ -16,5 +16,5 @@ class MatchConstraint(GameRule):
 
 class MatchConstraintFactory(GameRuleFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
-        key = visitor.property_key
+        key = visitor.property_key()
         return MatchConstraint(key)

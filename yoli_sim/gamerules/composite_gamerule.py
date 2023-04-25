@@ -7,6 +7,12 @@ class CompositeGameRule(GameRule):
         self._rules = rules
         self._comparer = logical_operator
 
+    def add_rule(self, rule:GameRule) -> None:
+        self._rules.append(rule)
+
+    def clear(self) -> None:
+        self._rules = []
+
     def evaluate(self, tiles: tuple[dict, ...]) -> tuple[int, ...]:
         output = [self.ignored] * len(tiles)
         for rule in self._rules:
