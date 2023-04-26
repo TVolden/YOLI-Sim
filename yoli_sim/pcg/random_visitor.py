@@ -5,13 +5,14 @@ class RandomVisitor(GameRuleConstructionVisitor):
         super().__init__()
         self._tiles = tiles
         self._random = random
+        self._excluded_keys = ['image']
 
-    def property_key(self, exclude_keys: tuple[str] = None) -> str:
+    def property_key(self, exclude_keys: tuple[str] = ()) -> str:
         dict_keys = [list(tiles.keys()) for tiles in self._tiles]
         flat_keys = [key for sub in dict_keys for key in sub]
         keys = list(set(flat_keys))
-        if exclude_keys is not None:
-             keys = [key for key in keys if key not in exclude_keys]
+        exclude = self._excluded_keys + list(exclude_keys)
+        keys = [key for key in keys if key not in exclude]
         return self.pick(keys)
     
     def property_value(self, property_key:str, exclude_values:list[str]=None) -> str:
