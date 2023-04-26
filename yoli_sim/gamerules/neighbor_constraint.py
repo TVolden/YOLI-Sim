@@ -40,3 +40,4 @@ class NeighborConstraintFactory(GameRuleFactory):
         value1 = visitor.property_value(key1)
         key2 = visitor.property_key()
         value2 = visitor.property_value(key2, [value1])
+        return NeighborConstraint(key1, value1, key2, value2)
