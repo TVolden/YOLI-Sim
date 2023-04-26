@@ -3,15 +3,15 @@ import numpy as np
 
 class YoliBoardSim:
     @property
-    def positions(self) -> tuple():
+    def positions(self) -> tuple[int,...]:
         return ([pos for pos in self._positions])
 
     @property
-    def indications(self) -> tuple():
+    def indications(self) -> tuple[int,...]:
         return tuple(self._indications)
     
     @property
-    def available_tiles(self) -> tuple():
+    def available_tiles(self) -> tuple[int,...]:
         return tuple([tile for tile in range(1, self.no_tiles + 1) if tile not in self.positions])
     
     def __init__(self, size, game:YoliTileGame):
@@ -23,16 +23,16 @@ class YoliBoardSim:
         self._game = game
         self.no_tiles = game.count_tiles()
 
-    def is_tile_available(self, tile):
+    def is_tile_available(self, tile:int):
         return tile in self.available_tiles
 
-    def position_occupied(self, pos) -> bool:
+    def position_occupied(self, pos:int) -> bool:
         return self._positions[pos] != 0
     
-    def get_tile(self, tileIndex):
+    def get_tile(self, tileIndex:int):
         return self._game.tile_at(tileIndex - 1)
     
-    def get_tile_at(self, pos) -> YoliTile:
+    def get_tile_at(self, pos:int) -> YoliTile:
         tile = self._positions[pos]
         if tile == 0:
             return None

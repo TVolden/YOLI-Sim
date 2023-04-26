@@ -190,7 +190,7 @@ class YoliSimEnv(gym.Env):
             )
             tileIndex = x + 1
             tile = self._sim.get_tile(tileIndex)
-            if tile is not None:
+            if tile is not None and self._sim.is_tile_available(tileIndex):
                 img = tile.image
                 object_ = Tile(img, tile_pix_square_size-margin-padding, tile_pix_square_size-margin-padding)
                 object_.rect.x = col * tile_pix_square_size + board_pix_square_size / 2 + padding / 2
