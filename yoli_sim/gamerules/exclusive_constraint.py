@@ -8,9 +8,9 @@ class ExclusiveConstraint(GameRule):
         self._allowed_value = allowed_value
     
     def evaluate(self, tiles: tuple[dict, ...]) -> tuple[int, ...]:
-        return tuple([1 if self._allowed_key in tile.keys() and \
+        return tuple([self.accepted if self._allowed_key in tile.keys() and \
                        tile[self._allowed_key]==self._allowed_value \
-                       else -1 \
+                       else self.rejected \
                         for tile in tiles])
     
     def __str__(self) -> str:
