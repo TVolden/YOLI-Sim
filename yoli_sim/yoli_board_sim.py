@@ -4,7 +4,7 @@ import numpy as np
 class YoliBoardSim:
     @property
     def positions(self) -> tuple[int,...]:
-        return ([pos for pos in self._positions])
+        return ([pos-1 if pos > 0 else None for pos in self._positions])
 
     @property
     def indications(self) -> tuple[int,...]:
@@ -12,7 +12,7 @@ class YoliBoardSim:
     
     @property
     def available_tiles(self) -> tuple[int,...]:
-        return tuple([tile for tile in range(1, self.no_tiles + 1) if tile not in self.positions])
+        return tuple([tile for tile in range(1, self.no_tiles + 1) if tile not in self._positions])
     
     def __init__(self, size, game:YoliTileGame):
         self.size = size
@@ -53,7 +53,7 @@ class YoliBoardSim:
 
         self._positions[pos] = tile
         # Create a board representation where No-Tile (0) indicator is replaced with None
-        board = [i-1 if i > 0 else None for i in self._positions]
+        board = self.positions
         self._indications, self.terminated = self._game.evaluate(board)
         self._positions[np.where(np.array(self._indications)==-1)] = 0
         self.notification = 1 if self.terminated else 0

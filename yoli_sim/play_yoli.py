@@ -48,6 +48,9 @@ class PlayYoli:
     def _tile_col_stride(self, x):
         return x * self._tile_size + self._board_tile_size / 2
 
+    def _pix_to_board_index(self, x):
+        return math.floor((x - self._half_margin) / self._board_tile_size)
+
     def _pix_to_col(self, x):
         return math.floor((x - self._board_tile_size / 2) / self._tile_size)
 
@@ -66,7 +69,7 @@ class PlayYoli:
     def _load_tiles(self) -> list[Tile]:
         tile_sprites = []
         for x in range(self.tiles):
-            tile = self._sim.get_tile(x)
+            tile = self._sim.get_tile(x+1)
             if tile is not None:
                 tile_sprites.append(Tile(tile.image))
         return tile_sprites
@@ -93,7 +96,7 @@ class PlayYoli:
             if tileIndex is not None:
                 tile = tiles[tileIndex]
                 tile.scale(self._board_size_inner, self._board_size_inner)
-                tile.transform(self._board_stride(x)+self._half_padding,
+                tile.transform(self._board_stride(x) + self._half_padding,
                                self._half_margin + self._half_padding)
 
     def _grid_coordinate(self, x):
@@ -118,7 +121,7 @@ class PlayYoli:
                 rect,
                 1
             )
-            if self._sim.is_tile_available(x):
+            if self._sim.is_tile_available(x + 1):
                 tile = tiles[x]
                 tile.scale(self._tile_size_inner, self._tile_size_inner)
                 tile.transform(self._tile_col_stride(col) + self._half_padding,
@@ -147,17 +150,37 @@ class PlayYoli:
         tile_sprites.draw(self.window)
         pygame.display.update()
     
-    def tile_at(self, x, y):
+    def _tile_at(self, x, y):
         if y < self.window_size and y > self._board_tile_size and \
            x > self._tile_col_stride(0) and x < self._tile_col_stride(self._tile_squares):
             col = self._pix_to_col(x)
             row = self._pix_to_row(y)
             tile_index = col + row * self._tile_squares
-            return tile_index if tile_index < self.tiles and self._sim.is_tile_available(tile_index) else None
+            return tile_index if tile_index < self.tiles and self._sim.is_tile_available(tile_index + 1) else None
         return None
     
-    def select_tile(self, tile_index):
-        self.selected = tile_index
+    def _board_index_at(self, x, y):
+        if y > 0 and y < self._board_tile_size and \
+           x > self._board_stride(0) and x < self._board_stride(self.size):
+            return self._pix_to_board_index(x)
+        return None
+    
+    def place_tile(self, x, y):
+        index = self._board_index_at(x, y)
+        if index is None:
+            self.selected = None
+        elif self.selected is not None:
+            if not self._sim.position_occupied(index):
+                self._sim.step(index, self.selected + 1)
+            self.selected = None
+        elif self._sim.position_occupied(index):
+            self._sim.step(index, 0)
+        
+    def select_tile(self, x, y):
+        tile = self._tile_at(x, y)
+        self.selected = tile
+        if tile is None:
+            self.place_tile(x, y)
 
     def move_selected_tile(self, pos: tuple[int, int]):
         self._selected_pos = pos
