@@ -1,5 +1,6 @@
 import random
 from abc import ABC, abstractproperty, abstractmethod
+from yoli_sim.utils import GameDifficultyAnalyzer
 
 class YoliTile:
     @property
@@ -35,6 +36,9 @@ class YoliTileGame(ABC):
     def reset(self):
         ...
 
+    def analyze_difficulty(self, analyzer: GameDifficultyAnalyzer) -> float:
+        return 0
+    
     def __init__(self):
         self._tiles = []
 
