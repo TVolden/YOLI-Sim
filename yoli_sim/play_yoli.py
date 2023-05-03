@@ -149,7 +149,7 @@ class PlayYoli:
         self.window.blit(canvas, canvas.get_rect())
         tile_sprites.draw(self.window)
         pygame.display.update()
-    
+
     def _tile_at(self, x, y):
         if y < self.window_size and y > self._board_tile_size and \
            x > self._tile_col_stride(0) and x < self._tile_col_stride(self._tile_squares):
@@ -189,3 +189,7 @@ class PlayYoli:
         if self.window is not None:
             pygame.display.quit()
             pygame.quit()
+    
+    @property
+    def notification(self):
+        return self._sim.notification

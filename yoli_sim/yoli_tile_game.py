@@ -15,6 +15,9 @@ class YoliTile:
         self._name = name
         self._image = image
 
+    def __str__(self) -> str:
+        return self._name
+
 class YoliTileGame(ABC):
     ACCEPTED = 1
     IGNORED = 0
@@ -35,16 +38,24 @@ class YoliTileGame(ABC):
     @abstractmethod
     def reset(self):
         ...
+    
+    def explain_rules(self) -> str:
+        return "unknown"
 
     def analyze_difficulty(self, analyzer: GameDifficultyAnalyzer) -> float:
         return 0
     
     def __init__(self):
         self._tiles = []
+        self.notification = 0
 
     def evaluate(self, positions: tuple[int,...]) -> tuple[tuple[int,...], bool]:
+        self.notification = 0
         tiles = [None if i is None else self._tiles[i] for i in positions]
-        return self._evaluate(tiles)
+        eval, terminal = self._evaluate(tiles)
+        if terminal and self.notification == 0:
+            self.notification = 1
+        return eval, terminal
 
     def count_tiles(self) -> int:
         return len(self._tiles)

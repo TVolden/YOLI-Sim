@@ -56,7 +56,7 @@ class YoliBoardSim:
         board = self.positions
         self._indications, self.terminated = self._game.evaluate(board)
         self._positions[np.where(np.array(self._indications)==-1)] = 0
-        self.notification = 1 if self.terminated else 0
+        self.notification = self._game.notification
     
     def _gate_input(self, pos, tile):
         if tile > 0 and self.position_occupied(pos):
