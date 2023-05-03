@@ -12,7 +12,7 @@ class PopulationConstraint(GameRule):
         amount = 0
         evaluation = []
         for tile in tiles:
-            if self._key in tile.keys() and tile[self._key] == self._value:
+            if tile is not None and self._key in tile.keys() and tile[self._key] == self._value:
                 if amount < self._limit:
                     evaluation.append(self.accepted)
                     amount += 1

@@ -8,10 +8,15 @@ class ExclusiveConstraint(GameRule):
         self._allowed_value = allowed_value
     
     def evaluate(self, tiles: tuple[dict, ...]) -> tuple[int, ...]:
-        return tuple([self.accepted if self._allowed_key in tile.keys() and \
-                       tile[self._allowed_key]==self._allowed_value \
-                       else self.rejected \
-                        for tile in tiles])
+        return tuple([self._match(tile) for tile in tiles])
+    
+    def _match(self, tile:dict):
+        if tile is None:
+            return self.ignored
+        elif self._allowed_key in tile.keys() and \
+            tile[self._allowed_key] == self._allowed_value:
+            return self.accepted
+        return self.rejected
     
     def __str__(self) -> str:
         return f"Exclusively for any where {self._allowed_key} is equal to {self._allowed_value}"

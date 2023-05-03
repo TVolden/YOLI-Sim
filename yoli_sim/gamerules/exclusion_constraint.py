@@ -11,7 +11,7 @@ class ExclusionConstraint(GameRule):
         return tuple([self._match(tile) for tile in tiles])
     
     def _match(self, tile:dict):
-        if self._exclusion_key in tile.keys() and \
+        if tile is not None and self._exclusion_key in tile.keys() and \
             tile[self._exclusion_key] == self._exclusion_value:
             return self.rejected
         return self.ignored

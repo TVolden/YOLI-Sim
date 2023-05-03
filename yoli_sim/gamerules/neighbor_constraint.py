@@ -13,13 +13,13 @@ class NeighborConstraint(GameRule):
     def evaluate(self, tiles: tuple[dict, ...]) -> tuple[int, ...]:
         eval = []
         for i, tile in enumerate(tiles):
-            if tile[self._triggered_key] == self._triggered_value:
+            if tile is not None and tile[self._triggered_key] == self._triggered_value:
                 if True in self.conflicting_neighbors(tiles, i):
-                    eval.append(-1)
+                    eval.append(self.rejected)
                 else:
-                    eval.append(1)
+                    eval.append(self.accepted)
             else:
-                eval.append(0)
+                eval.append(self.ignored)
         return tuple(eval)
     
     def __str__(self) -> str:
@@ -32,7 +32,8 @@ class NeighborConstraint(GameRule):
 
     def get_neighbors(self, tiles, index):
         return [tiles[index+n] for n in self._neighbors \
-                if index + n >= 0 and index + n < len(tiles)]
+                if index + n >= 0 and index + n < len(tiles) \
+                    and tiles[index+n] is not None]
 
 class NeighborConstraintFactory(GameRuleFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
