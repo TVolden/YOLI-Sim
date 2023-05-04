@@ -43,6 +43,7 @@ class YoliBoardSim:
         self._positions = np.array([0] * self.size)
         self._indications = [0] * self.size
         self.notification = 0
+        self.terminated = False
         self._game.reset()
     
     def shuffle_tiles(self):
