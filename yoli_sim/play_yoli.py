@@ -7,7 +7,7 @@ from yoli_sim import YoliTileGame, MatchTwo, YoliBoardSim
 
 class PlayYoli:
     def __init__(self, size:int = 5, game: YoliTileGame = MatchTwo()) -> None:
-        self.window_size = 512
+        self.window_size = 512*1.5
         self._sim = YoliBoardSim(size, game)
 
         self.window = None
@@ -193,3 +193,10 @@ class PlayYoli:
     @property
     def notification(self):
         return self._sim.notification
+    
+    @property
+    def done(self):
+        return self._sim.terminated
+
+    def reset_notification(self):
+        self._sim.notification = 0
