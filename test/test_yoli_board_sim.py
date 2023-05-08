@@ -34,6 +34,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0]*size, False))
+        gameMock.notification = 0
         sut = YoliBoardSim(size, gameMock)
 
         # When
@@ -48,6 +49,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0]*size, False))
+        gameMock.notification = 0
         sut = YoliBoardSim(size, gameMock)
         sut.step(0, 1)
 
@@ -78,7 +80,7 @@ class TestYoliBoardSim(unittest.TestCase):
         # Given
         gameMock = Mock(YoliTileGame)
         size = 5
-        expect = [0] * size
+        expect = [None] * size
         sut = YoliBoardSim(size, gameMock)
 
         # When
@@ -96,7 +98,8 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([1, 0, 0, 0, 0], False))
-        expect = [tile, 0, 0, 0, 0]
+        gameMock.notification = 0
+        expect = [tile-1, None, None, None, None]
         sut = YoliBoardSim(size, gameMock)
         sut.step(pos, tile)
 
@@ -126,6 +129,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock.count_tiles = Mock(return_value=1)
         evaluation = [1, -1, 0, -1, 1]
         gameMock.evaluate = Mock(return_value=(evaluation, False))
+        gameMock.notification = 0
         sut = YoliBoardSim(size, gameMock)
         sut.step(0, 1)
         expect = tuple(evaluation)
@@ -149,14 +153,27 @@ class TestYoliBoardSim(unittest.TestCase):
         # Then
         self.assertEqual(result, expect)
 
-    def test_notification_evaluationReturnsTrue_returnsOne(self):
+    def test_notification_default_returnsZero(self):
+        # Given
+        gameMock = Mock(YoliTileGame)
+        sut = YoliBoardSim(1, gameMock)
+        expect = 0
+
+        # When
+        result = sut.notification
+
+        # Then
+        self.assertEqual(result, expect)
+
+    def test_notification_returnsNotificationFromYoliTileGame(self):
         # Given
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0], True))
+        gameMock.notification = 42
         sut = YoliBoardSim(1, gameMock)
         sut.step(0, 1)
-        expect = 1
+        expect = 42
 
         # When
         result = sut.notification
@@ -184,6 +201,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=tiles)
         gameMock.evaluate = Mock(return_value=([0], True))
+        gameMock.notification = 0
         sut = YoliBoardSim(1, gameMock)
         sut.step(0, 1)
         expect = tuple(range(1, tiles - 1))
@@ -213,6 +231,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0], True))
+        gameMock.notification = 0
         sut = YoliBoardSim(1, gameMock)
         sut.step(0, 1)
 
@@ -241,6 +260,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0], True))
+        gameMock.notification = 0
         sut = YoliBoardSim(1, gameMock)
         sut.step(0, 1)
 
@@ -271,6 +291,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0], True))
         gameMock.tile_at = Mock(return_value=None)
+        gameMock.notification = 0
         sut = YoliBoardSim(1, gameMock)
         sut.step(pos, tile)
         expectedTileIndex = tile - 1 # Subtract the No-Tile (0) indicated
@@ -290,6 +311,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameStub.evaluate = Mock(return_value=([0], True))
         expected = Mock(YoliTile)
         gameStub.tile_at = Mock(return_value=expected)
+        gameStub.notification = 0
         sut = YoliBoardSim(1, gameStub)
         sut.step(pos, tile)
 

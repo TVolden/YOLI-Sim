@@ -53,7 +53,7 @@ class YoliSimEnv(gym.Env):
         
     def _get_obs(self):
         oh = np.zeros((self.size, self.tiles + 1), dtype=np.uint8)
-        oh[range(self.size), self._sim.positions] = 1
+        oh[range(self.size), self._sim._positions] = 1
         return oh.flatten()
 
     def _get_info(self):
