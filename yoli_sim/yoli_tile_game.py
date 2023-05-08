@@ -1,6 +1,6 @@
 import random
-from abc import ABC, abstractproperty, abstractmethod
-from yoli_sim.utils import GameDifficultyAnalyzer
+from abc import ABC, abstractmethod
+from yoli_sim.eval import RuleEvaluator, RuleEvaluatorFactory
 
 class YoliTile:
     @property
@@ -42,10 +42,14 @@ class YoliTileGame(ABC):
     def explain_rules(self) -> str:
         return "unknown"
 
-    def analyze_difficulty(self, analyzer: GameDifficultyAnalyzer) -> float:
-        return 0
+    def analyze(self, factory: RuleEvaluatorFactory) -> float:
+        return self.analyze_rule(factory.create(self._goal, self._tiles))
     
-    def __init__(self):
+    def analyze_rule(self, evaluator:RuleEvaluator) -> float:
+        return 0 # If GameRule is used, this should be overridden
+
+    def __init__(self, tiles2win:int = 5):
+        self._goal = tiles2win
         self._tiles = []
         self.notification = 0
 
