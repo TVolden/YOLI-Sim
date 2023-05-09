@@ -8,10 +8,10 @@ class TestPopulationControl(unittest.TestCase):
     def test_generate_callsGenerateRuleOnRuleGenerator(self):
         # Given
         generatorMock = Mock(RuleGenerator)
-        sut = Population(generatorMock)
+        sut = Population(1, generatorMock)
 
         # When
-        sut.generate(1)
+        sut.generate([])
 
         # Then
         generatorMock.generate_rule.assert_called_once()
@@ -19,11 +19,11 @@ class TestPopulationControl(unittest.TestCase):
     def test_generate_populationTwo_callsGenerateRuleOnRuleGeneratorTwoTimes(self):
         # Given
         generatorMock = Mock(RuleGenerator)
-        sut = Population(generatorMock)
+        sut = Population(2, generatorMock)
         expected = 2
 
         # When
-        sut.generate(2)
+        sut.generate([])
 
         # Then
         count = generatorMock.generate_rule.call_count
@@ -32,11 +32,11 @@ class TestPopulationControl(unittest.TestCase):
     def test_evaluate_callsEvaluateOnRuleEvaluator(self):
         # Given
         evalMock = Mock(RuleEvaluator)
-        sut = Population(Mock(RuleGenerator))
-        sut.generate(1)
+        sut = Population(1, Mock(RuleGenerator))
+        sut.generate([])
 
         # When
-        sut.evaluate_population(evalMock)
+        sut.evaluate(evalMock)
 
         # Then
         evalMock.evaluate.assert_called_once()

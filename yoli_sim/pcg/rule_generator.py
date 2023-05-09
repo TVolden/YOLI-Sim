@@ -6,5 +6,5 @@ class RuleGenerator(ABC):
         ...
     
     @abstractmethod
-    def generate_rule(self) -> GameRule:
+    def generate_rule(self, tiles:tuple[dict,...]) -> GameRule:
         ...

@@ -1,22 +1,36 @@
 from yoli_sim.eval import RuleEvaluator
-from yoli_sim.pcg import GameRule, RuleGenerator
-
-class Specimen:
-    def __init__(self, rule:GameRule) -> None:
-        self.rule = rule
-        self.value = 0   
+from yoli_sim.pcg import RuleGenerator
+from yoli_sim.pcg.population_selector import PopulationSelector
+from yoli_sim.pcg.specimen import Specimen
+import random
 
 class Population:
-    def __init__(self, rule_gen:RuleGenerator) -> None:
+    def __init__(self, size, rule_gen:RuleGenerator) -> None:
         self.rule_gen = rule_gen
+        self.population_size = size
+        self.reset()
+        
+    def reset(self):
+        self._population = []
 
-    @property
-    def population_size(self):
-        return len()
+    def generate(self, tile_examples:tuple[dict,...]) -> None:
+        for i in range(self.population_size - len(self._population)):
+            self._population.append(Specimen(self.rule_gen.generate_rule(tile_examples)))
 
-    def generate(self, population:int) -> None:
-        self._population = [Specimen(self.rule_gen.generate_rule()) for i in range(population)]
-
-    def evaluate_population(self, evaluator:RuleEvaluator):
+    def evaluate(self, evaluator:RuleEvaluator):
         for specimen in self._population:
             specimen.value = evaluator.evaluate(specimen.rule)
+
+    def scale(self, selector:PopulationSelector):
+        self._population = selector.select(self._population)
+
+    def clone(self, no_clones:int, trim:bool = True):
+        self._population = self._population * no_clones
+        
+        if trim:
+            self._population = self._population[:self.population_size]
+
+    def mutate(self, probability:float = 0.5, skip:int=0):
+        for specimen in self._population[skip:]:
+            if probability >= random.random():
+                specimen.mutate()

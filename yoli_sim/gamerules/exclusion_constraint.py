@@ -1,5 +1,4 @@
 from yoli_sim.gamerules import GameRule
-from yoli_sim.pcg import GameRuleFactory, GameRuleConstructionVisitor
 
 class ExclusionConstraint(GameRule):
     def __init__(self, exclusion_key:str, exclusion_value:str):
@@ -18,9 +17,3 @@ class ExclusionConstraint(GameRule):
     
     def __str__(self) -> str:
         return f"Exclude any where {self._exclusion_key} is equal to {self._exclusion_value}"
-    
-class ExclusionConstraintFactory(GameRuleFactory):
-    def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
-        key = visitor.property_key()
-        value = visitor.property_value(key)
-        return ExclusionConstraint(key, value)
