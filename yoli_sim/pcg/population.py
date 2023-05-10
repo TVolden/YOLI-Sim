@@ -29,11 +29,14 @@ class Population:
         self._population = [s.clone() for s in self._population]
 
     def mutate(self, probability:float = 0.5, skip:int=0):
+        mutations = 0
         for i in range(skip, len(self._population)):
             if probability >= random.random():
                 specimen = self._population[i].clone()
                 specimen.mutate()
                 self._population[i] = specimen
+                mutations += 1
+        return mutations
     
     def reset_values(self):
         for specimen in self._population:
