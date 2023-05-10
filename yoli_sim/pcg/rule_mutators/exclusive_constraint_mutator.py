@@ -18,7 +18,7 @@ class ExclusiveConstraintMutator(GameRuleMutator):
         value = self.visitor.property_value(key,
                                             [self.rule._allowed_value])
         
-        return ExclusiveConstraint(key, value)
+        return ExclusiveConstraintMutator(ExclusiveConstraint(key, value), self.visitor)
             
 class MutableExclusiveConstraintFactory(ExclusiveConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:

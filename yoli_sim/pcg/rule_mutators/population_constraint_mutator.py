@@ -25,7 +25,7 @@ class PopulationConstraintMutator(GameRuleMutator):
             limit = \
                 self.visitor.pick([i for i in range(1, 4) if i != self.rule._limit])
         
-        return PopulationConstraint(limit, key, value)
+        return PopulationConstraintMutator(PopulationConstraint(limit, key, value), self.visitor)
             
 class MutablePopulationConstraintFactory(PopulationConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:

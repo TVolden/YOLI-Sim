@@ -32,7 +32,7 @@ class NeighborConstraintMutator(GameRuleMutator):
                                             [self.rule._trigger_value,
                                              self.rule._triggered_value])
             
-        return NeighborConstraint(key1, value1, key2, value2)
+        return NeighborConstraintMutator(NeighborConstraint(key1, value1, key2, value2), self.visitor)
 
 class MutableNeighborConstraintFactory(NeighborConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
