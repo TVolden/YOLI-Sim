@@ -17,20 +17,24 @@ class Population:
         for i in range(self.population_size - len(self._population)):
             self._population.append(Specimen(self.rule_gen.generate_rule(tile_examples)))
 
-    def evaluate(self, evaluator:RuleEvaluator):
+    def evaluate(self, evaluator:RuleEvaluator, force:bool=False):
         for specimen in self._population:
-            specimen.value = evaluator.evaluate(specimen.rule)
+            if force or specimen.value == 0:
+                specimen.value = evaluator.evaluate(specimen.rule)
 
     def scale(self, selector:PopulationSelector):
         self._population = selector.select(self._population)
 
-    def clone(self, no_clones:int, trim:bool = True):
-        self._population = self._population * no_clones
-        
-        if trim:
-            self._population = self._population[:self.population_size]
+    def clone(self):
+        self._population = [s.clone() for s in self._population]
 
     def mutate(self, probability:float = 0.5, skip:int=0):
-        for specimen in self._population[skip:]:
+        for i in range(skip, len(self._population)):
             if probability >= random.random():
+                specimen = self._population[i].clone()
                 specimen.mutate()
+                self._population[i] = specimen
+    
+    def reset_values(self):
+        for specimen in self._population:
+            specimen.value = 0

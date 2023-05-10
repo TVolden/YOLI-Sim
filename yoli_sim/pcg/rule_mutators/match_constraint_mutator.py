@@ -9,8 +9,8 @@ class MatchConstraintMutator(GameRuleMutator):
         self.rule = rule
         self.visitor = visitor
 
-    def mutate(self) -> None:
-        self.rule._matcher.key = self.visitor.property_key([self.rule._matcher.key])
+    def mutate(self) -> GameRule:
+        return MatchConstraint(self.visitor.property_key([self.rule._matcher.key]))
 
 class MutableMatchConstraintFactory(MatchConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:

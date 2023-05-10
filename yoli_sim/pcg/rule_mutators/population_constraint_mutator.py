@@ -9,18 +9,23 @@ class PopulationConstraintMutator(GameRuleMutator):
         self.rule = rule
         self.visitor = visitor
 
-    def mutate(self) -> None:
+    def mutate(self) -> GameRule:
         d3 = self.visitor.pick([1,2,3])
+        key = self.rule._key
+        value = self.rule._value
+        limit = self.rule._limit
         if d3 % 2 != 0:
             if d3 == 1:
-                self.rule._key = \
+                key = \
                     self.visitor.property_key([self.rule._key])
-            self.rule._value = \
-                 self.visitor.property_value(self.rule._key,
+            value = \
+                 self.visitor.property_value(key,
                                              [self.rule._value])
         else:
-            self.rule._limit = \
+            limit = \
                 self.visitor.pick([i for i in range(1, 4) if i != self.rule._limit])
+        
+        return PopulationConstraint(limit, key, value)
             
 class MutablePopulationConstraintFactory(PopulationConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:

@@ -13,5 +13,5 @@ class GameRuleMutator(GameRule, ABC):
         return self.rule.__str__()
     
     @abstractmethod
-    def mutate(self) -> None:
+    def mutate(self) -> GameRule:
         ...

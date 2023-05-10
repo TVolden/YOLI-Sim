@@ -9,14 +9,16 @@ class ExclusiveConstraintMutator(GameRuleMutator):
         self.rule = rule
         self.visitor = visitor
 
-    def mutate(self) -> None:
+    def mutate(self) -> GameRule:
         coin = self.visitor.pick([True, False])
+        key = self.rule._allowed_key
         if coin:
-            self.rule._allowed_key = self.visitor.property_key([self.rule._allowed_key])
+            key = self.visitor.property_key([self.rule._allowed_key])
         
-        self.rule._allowed_value = \
-            self.visitor.property_value(self.rule._allowed_key, 
-                                        [self.rule._allowed_value])
+        value = self.visitor.property_value(key,
+                                            [self.rule._allowed_value])
+        
+        return ExclusiveConstraint(key, value)
             
 class MutableExclusiveConstraintFactory(ExclusiveConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:

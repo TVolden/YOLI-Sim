@@ -9,15 +9,17 @@ class ExclusionConstraintMutator(GameRuleMutator):
         self.rule = rule
         self.visitor = visitor
 
-    def mutate(self) -> None:
+    def mutate(self) -> GameRule:
         coin = self.visitor.pick([True, False])
+        key = self.rule._exclusion_key
         if coin:
-            self.rule._exclusion_key = \
+            key = \
                 self.visitor.property_key(self.rule._exclusion_key)
 
-        self.rule._exclusion_value = \
-            self.visitor.property_value(self.rule._exclusion_key,
+        value = \
+            self.visitor.property_value(key,
                                         self.rule._exclusion_value)
+        return ExclusionConstraint(key, value)
             
 class MutableExclusionConstraintFactory(ExclusionConstraintFactory):
     def construct(self, visitor: GameRuleConstructionVisitor) -> GameRule:
