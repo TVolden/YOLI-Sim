@@ -7,14 +7,16 @@ class UniqueSolutions(RuleEvaluator):
         super().__init__()
         self.tiles2win = tiles2win
         self.tiles = tiles
-    
+        self.sets = SetGenerator(tiles2win, len(tiles)).generate_all()
+
     def evaluate(self, rule: GameRule) -> float:
-        self.rule = rule
-        self.count = 0
-        tiles = range(len(self.tiles))
-        gen = SetGenerator(self.tiles2win, len(tiles))
-        gen.generate(self._evaluate)
-        return self.count
+        count = 0
+        for set in self.sets:
+            board = [self.tiles[i] if i >= 0 else None for i in set]
+            result = rule.evaluate(board)
+            if result.count(rule.rejected) == 0:
+                count += 1
+        return count
         
     def _evaluate(self, tiles: tuple[int,...]):
         board = [self.tiles[i] if i >= 0 else None for i in tiles]

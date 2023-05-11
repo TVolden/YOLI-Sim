@@ -2,7 +2,14 @@ class SetGenerator:
     def __init__(self, size:int, items:int) -> None:
         self.size = size
         self.items = items
-        
+    
+    def generate_all(self) -> tuple[tuple[int,...],...]:
+        default = [-1] * self.size
+        sets = []
+        self.callback = lambda tiles: sets.append(tiles)
+        self._iterate(self.size, self.items, 0, default)
+        return tuple(sets)
+
     def generate(self, callback):
         self.callback = callback
         default = [-1] * self.size
