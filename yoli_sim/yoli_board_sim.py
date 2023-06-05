@@ -1,4 +1,5 @@
 from yoli_sim import YoliTileGame, YoliTile
+from yoli_sim.events import *
 import numpy as np
 
 class YoliBoardSim:
@@ -13,11 +14,15 @@ class YoliBoardSim:
     @property
     def available_tiles(self) -> tuple[int,...]:
         return tuple([tile for tile in range(1, self.no_tiles + 1) if tile not in self._positions])
-    
+
     def __init__(self, size, game:YoliTileGame):
         self.size = size
+        self.logger = EventLogRepository()
         self.set_game(game)
         self.reset()
+
+    def set_event_logger(self, logger:EventLogger):
+        self.logger = logger
 
     def set_game(self, game:YoliTileGame):
         self._game = game
@@ -51,11 +56,23 @@ class YoliBoardSim:
 
     def step(self, pos, tile):
         self._gate_input(pos, tile)
+        
+        # Log tile inserted
+        self.logger.log(TileInsertedEvent(pos, self.get_tile_at(tile).image))
 
         self._positions[pos] = tile
         # Create a board representation where No-Tile (0) indicator is replaced with None
         board = self.positions
         self._indications, self.terminated = self._game.evaluate(board)
+
+        # Log tile rejected
+        for t in np.where(np.array(self._indications)==self._game.REJECTED):
+            self.logger.log(TileRejectedEvent(t))
+
+        # Log tile accepted
+        for t in np.where(np.array(self._indications)==self._game.ACCEPTED):
+            self.logger.log(TileAcceptedEvent(t, self.get_tile_at(t).name))
+
         self._positions[np.where(np.array(self._indications)==-1)] = 0
         self.notification = self._game.notification
     

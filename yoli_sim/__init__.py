@@ -1,4 +1,5 @@
 from gym.envs.registration import register
+from .events import *
 from .rewarders import *
 from .matchers import *
 #from .utils import *
