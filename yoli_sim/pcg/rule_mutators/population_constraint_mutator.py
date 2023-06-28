@@ -18,8 +18,15 @@ class PopulationConstraintMutator(GameRuleMutator):
             if d3 == 1:
                 key = \
                     self.visitor.property_key([self.rule._key])
-            value = \
-                 self.visitor.property_value(key,
+            try:
+                value = \
+                    self.visitor.property_value(key,
+                                             [self.rule._value])
+            except:
+                key = \
+                    self.visitor.property_key([key, self.rule._key])
+                value = \
+                    self.visitor.property_value(key,
                                              [self.rule._value])
         else:
             limit = \

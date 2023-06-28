@@ -58,7 +58,7 @@ class YoliBoardSim:
         self._gate_input(pos, tile)
         
         # Log tile inserted
-        self.logger.log(TileInsertedEvent(pos, self.get_tile_at(tile).image))
+        self.logger.log(TileInsertedEvent(pos, self.get_tile(tile).image))
 
         self._positions[pos] = tile
         # Create a board representation where No-Tile (0) indicator is replaced with None
@@ -66,12 +66,11 @@ class YoliBoardSim:
         self._indications, self.terminated = self._game.evaluate(board)
 
         # Log tile rejected
-        for t in np.where(np.array(self._indications)==self._game.REJECTED):
-            self.logger.log(TileRejectedEvent(t))
-
-        # Log tile accepted
-        for t in np.where(np.array(self._indications)==self._game.ACCEPTED):
-            self.logger.log(TileAcceptedEvent(t, self.get_tile_at(t).name))
+        for i, t in enumerate(self._indications):
+            if t == self._game.REJECTED:
+                self.logger.log(TileRejectedEvent(i))
+            if t == self._game.ACCEPTED:
+                self.logger.log(TileAcceptedEvent(i, self.get_tile_at(i).name))
 
         self._positions[np.where(np.array(self._indications)==-1)] = 0
         self.notification = self._game.notification

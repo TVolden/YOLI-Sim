@@ -5,3 +5,4 @@ from .random_picker import *
 from .random_visitor import *
 from .random_rule_generator import *
 from .effective_generator_decorator import *
+from .genetic_rule_generator import *

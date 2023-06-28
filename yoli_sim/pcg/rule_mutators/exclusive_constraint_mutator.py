@@ -15,7 +15,12 @@ class ExclusiveConstraintMutator(GameRuleMutator):
         if coin:
             key = self.visitor.property_key([self.rule._allowed_key])
         
-        value = self.visitor.property_value(key,
+        try:
+            value = self.visitor.property_value(key,
+                                            [self.rule._allowed_value])
+        except:
+            key = self.visitor.property_key([self.rule._allowed_key])
+            value = self.visitor.property_value(key,
                                             [self.rule._allowed_value])
         
         return ExclusiveConstraintMutator(ExclusiveConstraint(key, value), self.visitor)

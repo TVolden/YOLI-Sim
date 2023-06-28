@@ -19,16 +19,33 @@ class NeighborConstraintMutator(GameRuleMutator):
             if d4 == 2:
                 key1 = \
                     self.visitor.property_key([self.rule._trigger_key])
-            value1 = \
-                self.visitor.property_value(key1, 
+            try:
+                value1 = \
+                    self.visitor.property_value(key1, 
+                                            [self.rule._trigger_value,
+                                             self.rule._triggered_value])
+            except:
+                key1 = \
+                    self.visitor.property_key([key1, self.rule._trigger_key])
+                value1 = \
+                    self.visitor.property_value(key1, 
                                             [self.rule._trigger_value,
                                              self.rule._triggered_value])
         else:
             if d4 == 1:
                 key2 = \
                     self.visitor.property_key([self.rule._triggered_key])
-            value2 = \
-                self.visitor.property_value(key2, 
+            
+            try:
+                value2 = \
+                    self.visitor.property_value(key2, 
+                                            [self.rule._trigger_value,
+                                             self.rule._triggered_value])
+            except:
+                key2 = \
+                    self.visitor.property_key([key2])
+                value2 = \
+                    self.visitor.property_value(key2, 
                                             [self.rule._trigger_value,
                                              self.rule._triggered_value])
             

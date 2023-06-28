@@ -16,9 +16,17 @@ class ExclusionConstraintMutator(GameRuleMutator):
             key = \
                 self.visitor.property_key(self.rule._exclusion_key)
 
-        value = \
+        try:
+            value = \
             self.visitor.property_value(key,
-                                        self.rule._exclusion_value)
+                                        [self.rule._exclusion_value])
+        except:
+            key = \
+                self.visitor.property_key([key, self.rule._exclusion_key])
+            value = \
+                self.visitor.property_value(key,
+                                        [self.rule._exclusion_value])
+
         return ExclusionConstraintMutator(ExclusionConstraint(key, value), self.visitor)
             
 class MutableExclusionConstraintFactory(ExclusionConstraintFactory):

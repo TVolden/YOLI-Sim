@@ -19,6 +19,8 @@ class RandomVisitor(GameRuleConstructionVisitor):
         values = list(set([tile[property_key] for tile in self._tiles if property_key in tile.keys()]))
         if exclude_values is not None:
             values = [value for value in values if value not in exclude_values]
+            if len(values) == 0:
+                raise Exception("Filter too restrictive, there should at least be one element to sample.")
         return self.pick(values)
     
     def decimal(self, min: int, max: int) -> int:

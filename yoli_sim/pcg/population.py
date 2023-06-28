@@ -25,7 +25,11 @@ class Population:
         self.rule_gen = rule_gen
         self.population_size = size
         self.reset()
-        
+    
+    @property
+    def top(self) -> Specimen:
+        return self._population[0]
+    
     def reset(self):
         self._population = []
 
@@ -35,6 +39,9 @@ class Population:
 
     def evaluate(self, evaluator:RuleEvaluator, force:bool=False):
         self._parallel_evaluate(evaluator, force)
+
+    def sort(self):
+        self._population.sort(key=lambda x: x.value, reverse=True)
 
     def _serial_evaluate(self, evaluator:RuleEvaluator, force:bool=False):
         for specimen in self._population:
