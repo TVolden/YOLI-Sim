@@ -52,19 +52,19 @@ class Population:
         procs = [Proc() for _ in range(os.cpu_count())]
         for specimen in self._population:
             if force or specimen.value == 0:
-                available = [proc for proc in procs if proc.active == False]
-                while len(available) == 0:
+                active = [proc for proc in procs if proc.active == False]
+                while len(active) == 0:
                     time.sleep(0.01)
-                    available = [proc for proc in procs if proc.active == False]
+                    active = [proc for proc in procs if proc.active == False]
 
-                thread = Thread(target=available[0].eval, args=[evaluator])
-                available[0].assign(specimen, thread)
+                thread = Thread(target=active[0].eval, args=[evaluator])
+                active[0].assign(specimen, thread)
                 thread.start()
         
-        available = [proc for proc in procs if proc.active]
-        while len(available) == 0:
-            available[0].thread.join()
-            available = [proc for proc in procs if proc.active]
+        active = [proc for proc in procs if proc.active]
+        while len(active) > 0:
+            active[0].tread.join()
+            active = [proc for proc in procs if proc.active]
 
     def scale(self, selector:PopulationSelector):
         self._population = selector.select(self._population)
