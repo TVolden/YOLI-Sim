@@ -7,8 +7,10 @@ class EffectiveGenerator(RuleGenerator):
         self._decoratee = decoratee
         self.affect = at_least_affect
 
-    def generate_rule(self, tiles:tuple[dict,...]) -> GameRule:
-        rule:GameRule = self._decoratee.generate_rule(tiles)
-        while rule.evaluate(tiles).count(rule.rejected) < self.affect:
-            rule:GameRule = self._decoratee.generate_rule(tiles)
+    def generate_rule(self, board: tuple[dict, ...], tiles: tuple[dict, ...] = None) -> GameRule:
+        if tiles is None:
+            tiles = board
+        rule:GameRule = self._decoratee.generate_rule(board)
+        while rule.evaluate(board).count(rule.rejected) < self.affect:
+            rule:GameRule = self._decoratee.generate_rule(board)
         return rule
