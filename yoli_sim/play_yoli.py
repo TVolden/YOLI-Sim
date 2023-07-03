@@ -71,7 +71,7 @@ class PlayYoli:
         for x in range(self.tiles):
             tile = self._sim.get_tile(x+1)
             if tile is not None:
-                tile_sprites.append(Tile(tile.image))
+                tile_sprites.append(Tile(tile.image, alt_text=tile.name))
         return tile_sprites
 
     def _render_board_frame(self, canvas, tiles: list[Tile]):

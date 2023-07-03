@@ -2,6 +2,7 @@ from yoli_sim.eval import RuleEvaluator, RuleEvaluatorFactory
 from yoli_sim.gamerules import GameRule
 from yoli_sim.utils import SetGenerator
 
+# Brute force version of unique solution search
 class UniqueSolutions(RuleEvaluator):
     def __init__(self, tiles2win:int, tiles:tuple[dict]) -> None:
         super().__init__()

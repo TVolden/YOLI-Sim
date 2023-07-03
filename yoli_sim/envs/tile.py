@@ -3,9 +3,10 @@ import os
 
 class Tile(pygame.sprite.Sprite):
 
-    def __init__(self, image_file, width = 100, height = 100):
+    def __init__(self, image_file, width = 100, height = 100, alt_text = "?"):
         pygame.sprite.Sprite.__init__(self)
         self._org_image = None
+        self.alt_text = alt_text
 
         if (image_file is not None and os.path.exists(image_file)):
             self._org_image = pygame.image.load(image_file).convert()
@@ -17,8 +18,8 @@ class Tile(pygame.sprite.Sprite):
         image = pygame.Surface((width, height))
         image.fill((255, 0, 0))
         pygame.font.init()
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render("?", True, (0,0,0))
+        font = pygame.font.Font('freesansbold.ttf', 18)
+        text = font.render(self.alt_text, True, (0,0,0))
         textRect = text.get_rect()
         textRect.center = (width//2, height//2)
         image.blit(text, textRect)
