@@ -9,6 +9,10 @@ class LogicalOperator (ABC):
     @abstractmethod
     def compare(self, first:int, second:int) -> int:
         ...
+    
+    @abstractmethod
+    def operate(self, first:list[bool], second:list[bool]) -> list[bool]:
+        ...
 
     @abstractmethod
     def __str__(self) -> str:

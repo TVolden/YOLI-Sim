@@ -12,9 +12,10 @@ class EntropyEvaluator(RuleEvaluator):
         if free_spaces == 0:
             return 0.0 # Already solved
         else:
-            tiles = len(self.remaining)
-            max_entropy = (tiles - free_spaces/2 - 1/2) * free_spaces
-            return 1.0 - (rule.entropy(self.board, self.remaining) / max_entropy)
+            max_entropy = len(self.remaining) * free_spaces
+            entropy_array = rule.entropy(self.board, self.remaining)
+            entropy = [tiles for pos in entropy_array for tiles in pos].count(True)
+            return 1.0 - (entropy / max_entropy)
 
 class EntropyEvaluatorFactory(RuleEvaluatorFactory):
     def create(self, _: int, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> RuleEvaluator:

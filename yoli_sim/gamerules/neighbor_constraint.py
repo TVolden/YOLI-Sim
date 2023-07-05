@@ -34,3 +34,13 @@ class NeighborConstraint(GameRule):
                 if index + n >= 0 and index + n < len(tiles) \
                     and tiles[index+n] is not None]
 
+    def entropy(self, board: tuple[dict, ...], tiles: tuple[dict, ...]) -> list[list[bool]]:
+        untriggered = [(not (self._triggered_key in x.keys() and x[self._triggered_key] == self._triggered_value)) for x in tiles]
+        entropy = []
+        for i in range(len(board)):
+            if board[i] is not None:
+                entropy.append([False] * len(tiles))
+            else:
+                entropy.append([True] * len(tiles))
+
+        return entropy

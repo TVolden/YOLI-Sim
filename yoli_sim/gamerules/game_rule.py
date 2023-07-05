@@ -14,5 +14,5 @@ class GameRule (ABC):
     def __str__(self) -> str:
         ...
 
-    def entropy(self, board:tuple[dict,...], remaining:tuple[dict, ...]) -> int:
-        return 0 # Should be overwritten
+    def entropy(self, board:tuple[dict,...], tiles:tuple[dict, ...]) -> list[list[bool]]:
+        return [[True] * len(tiles) if b is None else [False] * len(tiles) for b in board] # All tiles are valid for all available positions

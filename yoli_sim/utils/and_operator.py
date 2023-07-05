@@ -10,5 +10,8 @@ class AndOperator (LogicalOperator):
             return self.rejected
         return first
     
+    def operate(self, first: list[bool], second: list[bool]) -> list[bool]:
+        return [first[i]==second[i] for i in range(len(first))]
+
     def __str__(self) -> str:
         return "and"

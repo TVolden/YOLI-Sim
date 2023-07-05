@@ -18,7 +18,6 @@ class ExclusionConstraint(GameRule):
     def __str__(self) -> str:
         return f"Exclude any where {self._exclusion_key} is equal to {self._exclusion_value}"
     
-    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> int:
-        free_space = len(tuple(filter(lambda x: x is None, board)))
-        valid_tiles = len(tuple(filter(lambda x: x[self._exclusion_key] != self._exclusion_value, remaining)))
-        return (valid_tiles - free_space/2 - 1/2) * free_space
+    def entropy(self, board: tuple[dict, ...], tiles: tuple[dict, ...]) -> list[list[bool]]:
+        valid_tiles = [False if self._exclusion_key in t.keys() and t[self._exclusion_key] == self._exclusion_value else True for t in tiles]
+        return [valid_tiles if b is None else [False] * len(tiles) for b in board]

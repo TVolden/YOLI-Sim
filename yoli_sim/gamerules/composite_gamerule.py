@@ -26,8 +26,9 @@ class CompositeGameRule(GameRule):
         out = ' '.join(rules)
         return out[:-len(str(self._comparer))-1]
     
-    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> int:
-        entropy = 0
+    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> list[list[bool]]:
+        entropy = super().entropy(board, remaining)
         for rule in self._rules:
-            entropy += rule.entropy(board, remaining) # Not optimal
+            new_entropy = rule.entropy(board, remaining)
+            entropy = [self._comparer.operate(entropy[i], new_entropy[i]) for i in range(len(entropy))]
         return entropy

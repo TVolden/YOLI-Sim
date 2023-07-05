@@ -25,7 +25,10 @@ class PopulationConstraint(GameRule):
     def __str__(self) -> str:
         return f"There can only be {self._limit} with {self._key} set to {self._value}"
 
-    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> int:
-        free_space = min(len(tuple(filter(lambda x: x is None, board))), self._limit)
-        valid_tiles = len(tuple(filter(lambda x: self._key in x.keys() and x[self._key] == self._value, remaining)))
-        return (valid_tiles - free_space/2 - 1/2) * free_space
+    def entropy(self, board: tuple[dict, ...], tiles: tuple[dict, ...]) -> list[list[bool]]:
+        amount = len(tuple(filter(lambda x: self._key in x.keys() and x[self._key] == self._value)))
+        if amount >= self._limit:
+            return [[False] * len(tiles)] * len(board) # Limit reached, no more tiles
+        
+        valid_tiles = [True if self._key in t.keys() and t[self._key] == self._value else False for t in tiles]
+        return [valid_tiles if b is None else [False] * len(tiles) for b in board]

@@ -20,7 +20,6 @@ class ExclusiveConstraint(GameRule):
     def __str__(self) -> str:
         return f"Exclusively for any where {self._allowed_key} is equal to {self._allowed_value}"
 
-    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> int:
-        free_space = len(tuple(filter(lambda x: x is None, board)))
-        valid_tiles = len(tuple(filter(lambda x: self._allowed_key in x.keys() and x[self._allowed_key] == self._allowed_value, remaining)))
-        return (valid_tiles - free_space/2 - 1/2) * free_space
+    def entropy(self, board: tuple[dict, ...], tiles: tuple[dict, ...]) -> list[list[bool]]:
+        valid_tiles = [True if self._allowed_key in t.keys() and t[self._allowed_key] == self._allowed_value else False for t in tiles]
+        return [valid_tiles if b is None else [False] * len(tiles) for b in board]
