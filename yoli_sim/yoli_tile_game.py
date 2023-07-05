@@ -42,8 +42,11 @@ class YoliTileGame(ABC):
     def explain_rules(self) -> str:
         return "unknown"
 
-    def analyze(self, factory: RuleEvaluatorFactory) -> float:
-        return self.analyze_rule(factory.create(self._goal, self._tiles))
+    def analyze(self, factory: RuleEvaluatorFactory, positions: tuple[int,...]) -> float:
+        board = tuple([None if i is None else self._tiles[i] for i in positions])
+        remaining = tuple(filter(lambda x: x not in board, self._tiles))
+        evaluator = factory.create(self._goal, board, remaining)
+        return self.analyze_rule(evaluator)
     
     def analyze_rule(self, evaluator:RuleEvaluator) -> float:
         return 0 # If GameRule is used, this should be overridden

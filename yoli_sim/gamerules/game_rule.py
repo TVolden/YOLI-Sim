@@ -13,3 +13,6 @@ class GameRule (ABC):
     @abstractmethod
     def __str__(self) -> str:
         ...
+
+    def entropy(self, board:tuple[dict,...], remaining:tuple[dict, ...]) -> int:
+        return 0 # Should be overwritten

@@ -25,3 +25,9 @@ class CompositeGameRule(GameRule):
         rules = [f"{rule} {self._comparer}" for rule in self._rules]
         out = ' '.join(rules)
         return out[:-len(str(self._comparer))-1]
+    
+    def entropy(self, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> int:
+        entropy = 0
+        for rule in self._rules:
+            entropy += rule.entropy(board, remaining) # Not optimal
+        return entropy

@@ -1,4 +1,4 @@
-from yoli_sim import YoliTileGame, YoliTile
+from yoli_sim import YoliTileGame, YoliTile, RuleEvaluatorFactory
 from yoli_sim.events import *
 import numpy as np
 
@@ -75,6 +75,9 @@ class YoliBoardSim:
         self._positions[np.where(np.array(self._indications)==-1)] = 0
         self.notification = self._game.notification
     
+    def analyze(self, factory:RuleEvaluatorFactory) -> float:
+        return self._game.analyze(factory, self.positions)
+
     def _gate_input(self, pos, tile):
         if tile > 0 and self.position_occupied(pos):
             raise Exception("Illegal action. Tiles can't be replaced with other tiles, only removed.")

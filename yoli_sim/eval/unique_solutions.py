@@ -26,5 +26,6 @@ class UniqueSolutions(RuleEvaluator):
             self.count += 1
 
 class UniqueSolutionsFactory(RuleEvaluatorFactory):
-    def create(self, tiles2win: int, tiles: tuple[dict]) -> RuleEvaluator:
+    def create(self, tiles2win: int, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> RuleEvaluator:
+        tiles = filter(lambda x:x is not None, board) + remaining
         return UniqueSolutions(tiles2win, tiles)
