@@ -1,7 +1,7 @@
 from yoli_sim.pcg import RuleGenerator
 from yoli_sim.gamerules import GameRule
 from yoli_sim.pcg.population import Population
-from yoli_sim.eval import UniqueSolutions, TargetValueDecorator, ImmediateEffectCutoff
+from yoli_sim.eval import UniqueSolutions, TargetValueDecorator, ImmediateEffectCutoff, EntropyEvaluator, NormalizedTargetValueDecorator
 from yoli_sim.pcg.population_selector import SelectorComposite, HighestValueSelector
 from yoli_sim.pcg.roulette_selector import *
    
@@ -9,7 +9,7 @@ class GeneticRuleGenerator(RuleGenerator):
         def __init__(
                     self, 
                     generator:RuleGenerator,
-                    target:int = 70_000,
+                    target:float = 0.5,
                     max_generations:int = 50,
                     population_size:int = 100,
                     mutation_rate:float = 0.5) -> None:
@@ -19,9 +19,8 @@ class GeneticRuleGenerator(RuleGenerator):
             self._size = population_size
             self._mutation_rate = mutation_rate
             self._tolerance = 0.001
-            self._max_solutions = 142_506
         
-        def set_target(self, target:int) -> None:
+        def set_target(self, target:float) -> None:
               self._target = target
 
         def generate_rule(self, board: tuple[dict, ...], tiles: tuple[dict, ...] = None) -> GameRule:
@@ -33,9 +32,11 @@ class GeneticRuleGenerator(RuleGenerator):
             for generation in range(self._generations):
                 pop.evaluate(
                     ImmediateEffectCutoff(
-                    TargetValueDecorator(
-                    UniqueSolutions(5, tiles), self._target, self._max_solutions),
-                    board))
+                        NormalizedTargetValueDecorator(
+                            #UniqueSolutions(5, tiles)
+                            EntropyEvaluator(board, tiles),
+                            self._target),
+                        board))
                 
                 pop.scale(SelectorComposite([HighestValueSelector(1), RouletteSelector(self._size - 1)]))
                 pop.sort()
