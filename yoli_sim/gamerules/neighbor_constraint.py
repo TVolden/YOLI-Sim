@@ -33,14 +33,18 @@ class NeighborConstraint(GameRule):
         return [tiles[index+n] for n in self._neighbors \
                 if index + n >= 0 and index + n < len(tiles) \
                     and tiles[index+n] is not None]
+    
+    def get_valid_options(self, board, tiles, index):
+        if True in self.conflicting_neighbors(board, index):
+            return [tile[self._triggered_key]!=self._triggered_value for tile in tiles]
+        return [True] * len(tiles)
 
     def entropy(self, board: tuple[dict, ...], tiles: tuple[dict, ...]) -> list[list[bool]]:
-        untriggered = [(not (self._triggered_key in x.keys() and x[self._triggered_key] == self._triggered_value)) for x in tiles]
         entropy = []
         for i in range(len(board)):
             if board[i] is not None:
                 entropy.append([False] * len(tiles))
             else:
-                entropy.append([True] * len(tiles))
+                entropy.append(self.get_valid_options(board, tiles, i))
 
         return entropy
