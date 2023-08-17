@@ -9,7 +9,7 @@ class MatchTwo (YoliTileGame):
         self._rule = MatchConstraint("group")
 
     def tile_at(self, index:int) -> YoliTile:
-        return YoliTile(f"{index}", self._tiles[index].get("image"))
+        return YoliTile(str(self._tiles[index].get("group")), self._tiles[index].get("image"))
 
     def count_tiles(self) -> int:
         return len(self._tiles)
