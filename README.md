@@ -16,19 +16,18 @@ Run play.py
 python play.py
 ```
 
-## Using GYM (OpenAI)
-
-The library uses the deprecated version of *gym* to support libraries such as stable-baselines3.
+## Using Gymnasium (Farama Foundation)
 
 Create environment:
 
 ```python
-import gym
+import gymnasium as gym
 
-env = gym.make('gym_yoli/YoliSim-v0')
+env = gym.make('yoli/YoliSim-v0')
 ```
 
 It is possible to provide an instance of a YoliTileGame with the *game* parameter.
+
 ```python
-env = gym.make('gym_yoli/YoliSim-v0', game=CustomGame())
+env = gym.make('yoli/YoliSim-v0', game=CustomGame())
 ```

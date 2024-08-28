@@ -1,4 +1,4 @@
-from gym.envs.registration import register
+from gymnasium.envs.registration import register
 from .events import *
 from .rewarders import *
 from .matchers import *
@@ -9,7 +9,7 @@ from .match_two import *
 from .yoli_board_sim import *
 
 register(
-    id="gym_yoli/YoliSim-v0",
+    id="yoli/YoliSim-v0",
     entry_point="yoli_sim.envs:YoliSimEnv",
     max_episode_steps=100
 )
