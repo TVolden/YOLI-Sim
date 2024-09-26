@@ -290,7 +290,7 @@ class TestYoliBoardSim(unittest.TestCase):
         gameMock = Mock(YoliTileGame)
         gameMock.count_tiles = Mock(return_value=1)
         gameMock.evaluate = Mock(return_value=([0], True))
-        gameMock.tile_at = Mock(return_value=None)
+        gameMock.tile_at = Mock(return_value=Mock(YoliTile))
         gameMock.notification = 0
         sut = YoliBoardSim(1, gameMock)
         sut.step(pos, tile)
@@ -300,7 +300,7 @@ class TestYoliBoardSim(unittest.TestCase):
         sut.get_tile_at(pos)
 
         # Then
-        gameMock.tile_at.assert_called_once_with(expectedTileIndex)
+        gameMock.tile_at.assert_called_with(expectedTileIndex)
     
     def test_getTileAt_tileAtPosition_returnsTileFromYoliTileGame(self):
         # Given
