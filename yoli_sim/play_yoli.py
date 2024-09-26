@@ -165,7 +165,7 @@ class PlayYoli:
             return self._pix_to_board_index(x)
         return None
     
-    def place_tile(self, x, y):
+    def place_tile(self, x, y) -> None:
         index = self._board_index_at(x, y)
         if index is None:
             self.selected = None
@@ -175,8 +175,25 @@ class PlayYoli:
             self.selected = None
         elif self._sim.position_occupied(index):
             self._sim.step(index, 0)
+
+    def board_now(self) -> list[int]:
+        return [index for index in self._sim.positions]
+
+    def board_potential(self, x, y) -> tuple[int,...]:
+        board = self.board_now()
+        index = self._board_index_at(x,y)
+        if index is None:
+            pass
+        elif self.selected is not None:
+            if not self._sim.position_occupied(index):
+                board[index]=self.selected
+        elif self._sim.position_occupied(index):
+            board[index]=None
         
-    def select_tile(self, x, y):
+    def get_selected_tile_index(self) -> int:
+        return self.selected
+    
+    def select_tile(self, x, y) -> None:
         tile = self._tile_at(x, y)
         self.selected = tile
         if tile is None:
