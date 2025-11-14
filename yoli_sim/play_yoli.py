@@ -14,6 +14,7 @@ class PlayYoli:
         self.clock = None
         self.selected = None
         self._selected_pos = (0, 0)
+        self.rejects = []
         # aliases
         self.tiles = self._sim.no_tiles
         self.size = self._sim.size
@@ -117,9 +118,9 @@ class PlayYoli:
             )
             pygame.draw.rect(
                 canvas,
-                (0, 0, 0),
+                (0, 0, 0) if x not in self.rejects else (255, 0, 0),
                 rect,
-                1
+                2
             )
             if self._sim.is_tile_available(x + 1):
                 tile = tiles[x]
@@ -171,7 +172,9 @@ class PlayYoli:
             self.selected = None
         elif self.selected is not None:
             if not self._sim.position_occupied(index):
+                pre_board = self.board_potential_by_index(index)
                 self._sim.step(index, self.selected + 1)
+                self.rejects = [tile for (i,tile) in enumerate(pre_board) if self._sim.indications[i]==-1]
             self.selected = None
         elif self._sim.position_occupied(index):
             self._sim.step(index, 0)
@@ -179,9 +182,8 @@ class PlayYoli:
     def board_now(self) -> list[int]:
         return [index for index in self._sim.positions]
 
-    def board_potential(self, x, y) -> tuple[int,...]:
+    def board_potential_by_index(self, index) -> tuple[int,...]:
         board = self.board_now()
-        index = self._board_index_at(x,y)
         if index is None:
             pass
         elif self.selected is not None:
@@ -189,6 +191,11 @@ class PlayYoli:
                 board[index]=self.selected
         elif self._sim.position_occupied(index):
             board[index]=None
+        return board
+
+    def board_potential(self, x, y) -> tuple[int,...]:
+        index = self._board_index_at(x,y)
+        return self.board_potential_by_index(index)
         
     def get_selected_tile_index(self) -> int:
         return self.selected
