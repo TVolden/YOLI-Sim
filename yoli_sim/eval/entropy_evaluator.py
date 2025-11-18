@@ -29,7 +29,7 @@ class EntropyEvaluator(RuleEvaluator):
                 has_true = has_true or entropy_per_pos[n][i]
             entropy.append(has_true)
         
-        return entropy.count(True) <= free_spaces
+        return entropy.count(True) >= free_spaces
 
 class EntropyEvaluatorFactory(RuleEvaluatorFactory):
     def create(self, _: int, board: tuple[dict, ...], remaining: tuple[dict, ...]) -> RuleEvaluator:
